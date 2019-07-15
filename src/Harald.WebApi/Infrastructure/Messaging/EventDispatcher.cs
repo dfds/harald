@@ -34,7 +34,7 @@ namespace Harald.WebApi.Infrastructure.Messaging
             }
             catch (JsonReaderException ex)
             {
-                throw new EventMessageIncomprehensible("Received a message that could not be deserialized from expected JSON structure.");
+                throw new EventMessageIncomprehensible($"Received a message that could not be deserialized from expected JSON structure. Original exception: {ex}");
             }
             await SendAsync(generalDomainEventObj, serviceScope);
         }
