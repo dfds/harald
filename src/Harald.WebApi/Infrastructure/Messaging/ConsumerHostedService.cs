@@ -68,6 +68,11 @@ namespace Harald.WebApi.Infrastructure.Messaging
                                         _logger.LogWarning($"Message skipped. Exception message: {ex.Message}", ex);
                                         await consumer.CommitAsync(msg);
                                     }
+                                    catch (EventMessageIncomprehensible ex)
+                                    {
+                                        _logger.LogWarning(ex, $"Encountered a message that was irrecoverably incomprehensible. Skipping. Raw message included {msg} with value '{msg.Value}'");
+                                        await consumer.CommitAsync(msg);
+                                    }
                                     catch (Exception ex)
                                     {
                                         _logger.LogError($"Error consuming event. Exception message: {ex.Message}", ex);

@@ -16,6 +16,13 @@ namespace Harald.WebApi.Infrastructure.Messaging
         }
     }
 
+    public class EventMessageIncomprehensible : MessagingException
+    {
+        public EventMessageIncomprehensible(string message) : base(message)
+        {
+        }
+    }
+
     public class EventHandlerNotFoundException : MessagingException
     {
         public EventHandlerNotFoundException(string message) : base(message)
