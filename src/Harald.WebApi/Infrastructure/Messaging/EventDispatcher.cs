@@ -6,6 +6,7 @@ using Harald.WebApi.EventHandlers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Serilog.Context;
 
 namespace Harald.WebApi.Infrastructure.Messaging
 {
@@ -45,15 +46,19 @@ namespace Harald.WebApi.Infrastructure.Messaging
             {
                 throw new EventMessageIncomprehensible("Received a blank message");
             }
-            
-            var eventType = _eventRegistry.GetInstanceTypeFor(generalDomainEvent.EventName);
-            dynamic domainEvent = Activator.CreateInstance(eventType, generalDomainEvent);
-            dynamic handlersList = _eventHandlerFactory.GetEventHandlersFor(domainEvent, serviceScope);
-            
-            foreach (var handler in handlersList)
+
+            using (LogContext.PushProperty("CorrelationId", generalDomainEvent.XCorrelationId))
             {
-                await handler.HandleAsync(domainEvent);
+                var eventType = _eventRegistry.GetInstanceTypeFor(generalDomainEvent.EventName);
+                dynamic domainEvent = Activator.CreateInstance(eventType, generalDomainEvent);
+                dynamic handlersList = _eventHandlerFactory.GetEventHandlersFor(domainEvent, serviceScope);
+            
+                foreach (var handler in handlersList)
+                {
+                    await handler.HandleAsync(domainEvent);
+                }
             }
+            
         }
     }
 }
