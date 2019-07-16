@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Harald.WebApi.Infrastructure.Serialization;
@@ -32,6 +33,11 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
             var content = await response.Content.ReadAsStringAsync();
             var createChannelResponse = _serializer.Deserialize<CreateChannelResponse>(content);
 
+            // If one tries to use a Slack channel name that already exists, create an unique channel name from the given input.
+            if (!createChannelResponse.Ok && createChannelResponse.Error.Equals("name_taken"))
+            {
+                return await CreateChannel(UniqueChannelNameGen(channelName));
+            }
             return createChannelResponse;
         }
 
@@ -169,6 +175,22 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
 
             var response = await _client.PostAsync("/api/usergroups.users.update", payload);
             response.EnsureSuccessStatusCode();
+        }
+
+        private string UniqueChannelNameGen(string takenChannelName)
+        {
+            var availableChars = "0123456789";
+            var randStringBuilder = new StringBuilder();
+            var random = new Random();
+            const int randStringLength = 1;
+
+            for (int i = 0; i < randStringLength; i++)
+            {
+                randStringBuilder.Append(availableChars[random.Next(availableChars.Length)]);
+            }
+            
+            var channelName = takenChannelName.Length <= 19 ? $"{takenChannelName}-{randStringBuilder.ToString()}" : $"{takenChannelName.Substring(0, 19)}-{randStringBuilder.ToString()}";
+            return channelName;
         }
     }
 }
