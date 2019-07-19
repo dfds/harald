@@ -51,14 +51,11 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
         public async Task<SendNotificationResponse> SendDelayedNotificationToChannel(string channel, string message, long delayTimeInEpoch)
         {
             var payload = _serializer.GetPayload(new { Channel = channel, Text = message, post_at = delayTimeInEpoch });
-            var raaa = await payload.ReadAsStringAsync();
-
             var response = await _client.PostAsync("/api/chat.scheduleMessage", payload);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
             var sendNotificationResponse = _serializer.Deserialize<SendNotificationResponse>(content);
-
             return sendNotificationResponse;
         }
 
@@ -96,6 +93,13 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
 
             var response = await _client.PostAsync("/api/channels.invite", payload);
             response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var generalResponse = _serializer.Deserialize<GeneralResponse>(content);
+            if (!generalResponse.Ok)
+            {
+                throw new SlackFacadeException($"API error: {generalResponse.Error}");
+            }
         }
 
         public async Task RemoveFromChannel(string email, string channelId)
@@ -105,6 +109,13 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
 
             var response = await _client.PostAsync("/api/channels.kick", payload);
             response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var generalResponse = _serializer.Deserialize<GeneralResponse>(content);
+            if (!generalResponse.Ok)
+            {
+                throw new SlackFacadeException($"API error: {generalResponse.Error}");
+            }
         }
 
         public async Task<CreateUserGroupResponse> CreateUserGroup(string name, string handle, string description)
@@ -117,6 +128,11 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
 
             var content = await response.Content.ReadAsStringAsync();
             var createUserGroupResponse = _serializer.Deserialize<CreateUserGroupResponse>(content);
+            
+            if (!createUserGroupResponse.Ok)
+            {
+                throw new SlackFacadeException($"API error: {createUserGroupResponse.Error}");
+            }
 
             return createUserGroupResponse;
         }
@@ -158,6 +174,12 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
 
             var content = await response.Content.ReadAsStringAsync();
             var users = _serializer.GetTokenValue<List<string>>(content, "['users']");
+            
+            var generalResponse = _serializer.Deserialize<GeneralResponse>(content);
+            if (!generalResponse.Ok)
+            {
+                throw new SlackFacadeException($"API error: {generalResponse.Error}");
+            }
 
             return users;
         }
@@ -169,6 +191,20 @@ namespace Harald.WebApi.Infrastructure.Facades.Slack
 
             var response = await _client.PostAsync("/api/usergroups.users.update", payload);
             response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var generalResponse = _serializer.Deserialize<GeneralResponse>(content);
+            if (!generalResponse.Ok)
+            {
+                throw new SlackFacadeException($"API error: {generalResponse.Error}");
+            }
+        }
+
+        public class SlackFacadeException : Exception
+        {
+            public SlackFacadeException() : base() {}
+            public SlackFacadeException(string message) : base(message) {}
+            public SlackFacadeException(string message, Exception inner) : base(message, inner) {}
         }
     }
 }

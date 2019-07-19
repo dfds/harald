@@ -33,16 +33,31 @@ namespace Harald.WebApi.EventHandlers
                     $"Couldn't get capability with ID {domainEvent.Payload.CapabilityId}. Can't add member {domainEvent.Payload.MemberEmail} to Slack.");
                 return;    
             }
-                        
-            // Invite user to Slack channel:
-            await _slackFacade.InviteToChannel(
-                email: domainEvent.Payload.MemberEmail,
-                channelId: capability.SlackChannelId);
 
-            // Add user to Slack user group:
-            await _slackFacade.AddUserGroupUser(
-                email: domainEvent.Payload.MemberEmail,
-                userGroupId: capability.SlackUserGroupId);
+            try
+            {
+                // Invite user to Slack channel:
+                await _slackFacade.InviteToChannel(
+                    email: domainEvent.Payload.MemberEmail,
+                    channelId: capability.SlackChannelId);
+            }
+            catch (SlackFacade.SlackFacadeException ex)
+            {
+                _logger.LogError($"Issue with Slack API during InviteToChannel: {ex} : {ex.Message}");
+            }
+
+            try
+            {
+                // Add user to Slack user group:
+                await _slackFacade.AddUserGroupUser(
+                    email: domainEvent.Payload.MemberEmail,
+                    userGroupId: capability.SlackUserGroupId);
+            }
+            catch (SlackFacade.SlackFacadeException ex)
+            {
+                _logger.LogError($"Issue with Slack API during AddUserGroupUser: {ex} : {ex.Message}");
+            }
+
 
             /*
             // Disabled for now due to redundant messages. Read commit where this line is introduced in order to find further information.

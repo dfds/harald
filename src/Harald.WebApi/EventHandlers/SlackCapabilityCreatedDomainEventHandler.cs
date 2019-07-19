@@ -26,10 +26,20 @@ namespace Harald.WebApi.EventHandlers
         public async Task HandleAsync(CapabilityCreatedDomainEvent domainEvent)
         {
             var createChannelResponse = await _slackFacade.CreateChannel(domainEvent.Payload.CapabilityName);
-            var createUserGroupResponse = await _slackFacade.CreateUserGroup(
-                name: $"{domainEvent.Payload.CapabilityName} user group",
-                handle: domainEvent.Payload.CapabilityName,
-                description: $"User group for capability {domainEvent.Payload.CapabilityName}.");
+
+            CreateUserGroupResponse createUserGroupResponse = null;
+            try
+            {
+                createUserGroupResponse = await _slackFacade.CreateUserGroup(
+                    name: $"{domainEvent.Payload.CapabilityName} user group",
+                    handle: domainEvent.Payload.CapabilityName,
+                    description: $"User group for capability {domainEvent.Payload.CapabilityName}.");   
+            }
+            catch (SlackFacade.SlackFacadeException ex)
+            {
+                _logger.LogError($"Issue with Slack API during CreateUserGroup: {ex} : {ex.Message}");
+            }
+
 
             var channelId = createChannelResponse?.Channel?.Id;
             var channelName = createChannelResponse?.Channel?.Name;

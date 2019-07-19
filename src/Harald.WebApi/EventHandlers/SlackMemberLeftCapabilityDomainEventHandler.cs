@@ -34,17 +34,31 @@ namespace Harald.WebApi.EventHandlers
                 return;    
             }
 
-            // Remove user from Slack channel:
-            await _slackFacade.RemoveFromChannel(
-                email: domainEvent.Payload.MemberEmail,
-                channelId: capability.SlackChannelId);
+            try
+            {
+                // Remove user from Slack channel:
+                await _slackFacade.RemoveFromChannel(
+                    email: domainEvent.Payload.MemberEmail,
+                    channelId: capability.SlackChannelId);
+            }
+            catch (SlackFacade.SlackFacadeException ex)
+            {
+                _logger.LogError($"Issue with Slack API during RemoveFromChannel: {ex} : {ex.Message}");
+            }
 
-            // Remove user from Slack user group:
-            await _slackFacade.RemoveUserGroupUser(
-                email: domainEvent.Payload.MemberEmail,
-                userGroupId: capability.SlackUserGroupId);
+            try
+            {
+                // Remove user from Slack user group:
+                await _slackFacade.RemoveUserGroupUser(
+                    email: domainEvent.Payload.MemberEmail,
+                    userGroupId: capability.SlackUserGroupId);
+            }
+            catch (SlackFacade.SlackFacadeException ex)
+            {
+                _logger.LogError($"Issue with Slack API during RemoveUserGroupUser: {ex} : {ex.Message}");
+            }
 
-            // Notify user that it has been invited.
+            // Notify user that it has been removed.
             await _slackFacade.SendNotificationToUser(
                 email: domainEvent.Payload.MemberEmail, 
                 message: 
