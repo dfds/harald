@@ -28,16 +28,15 @@ namespace Harald.WebApi.Infrastructure.Messaging
 
         public async Task Send(string generalDomainEventJson, IServiceScope serviceScope)
         {
-            GeneralDomainEvent generalDomainEventObj = new GeneralDomainEvent("", "", "", "", "");
             try
             {
-                generalDomainEventObj = JsonConvert.DeserializeObject<GeneralDomainEvent>(generalDomainEventJson);
+                var generalDomainEventObj = JsonConvert.DeserializeObject<GeneralDomainEvent>(generalDomainEventJson);
+                await SendAsync(generalDomainEventObj, serviceScope);
             }
             catch (JsonReaderException ex)
             {
                 throw new EventMessageIncomprehensible($"Received a message that could not be deserialized from expected JSON structure. Original exception: {ex}");
             }
-            await SendAsync(generalDomainEventObj, serviceScope);
         }
 
         public async Task SendAsync(GeneralDomainEvent generalDomainEvent, IServiceScope serviceScope)
