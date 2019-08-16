@@ -90,7 +90,7 @@ namespace Harald.WebApi
             services.AddTransient<IEventHandler<K8sNamespaceCreatedAndAwsArnConnectedDomainEvent>, K8sNamespaceCreatedAndAwsArnConnectedDomainEventHandler>();
             services.AddTransient<EventHandlerFactory>();
 
-            var topic = "build.capabilities";
+            var topic = "build.selfservice.events.capabilities";
 
             var eventRegistry = new DomainEventRegistry()
                 .Register<CapabilityCreatedDomainEvent>(
