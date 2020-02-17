@@ -18,12 +18,12 @@ variables:
 resources:
    containers:
      - container: ci_runner
-       image: dfdsdk/pipeline:0.0.1
+       image: dfdsdk/pre-prime-pipeline:0.2
        env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         AWS_PROFILE: "default"
      - container: cd_runner
-       image: dfdsdk/pipeline:0.0.1
+       image: dfdsdk/pre-prime-pipeline:0.2
        env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         PGPASSWORD: $(PGPASSWORD)
@@ -45,7 +45,7 @@ stages:
   - job: Build
     dependsOn: Create_ECR
     condition: succeeded('Create_ECR')
-    pool: 
+    pool:
       vmImage: 'ubuntu-16.04'
     steps:
     # - task: DotNetCoreInstaller@0
@@ -85,7 +85,7 @@ stages:
 # Continuous Deployment steps
 - stage: CD
   dependsOn: CI
-  condition: and(succeeded('CI'), eq(variables['Build.SourceBranch'], 'refs/heads/master')) 
+  condition: and(succeeded('CI'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   jobs:
   - job: "Create_Infrastruture_On_AWS"
@@ -104,7 +104,7 @@ stages:
     dependsOn: Create_Infrastruture_On_AWS
     condition: succeeded('Create_Infrastruture_On_AWS')
 
-    strategy: 
+    strategy:
       runOnce:
         deploy:
           steps:
@@ -117,7 +117,7 @@ stages:
               curl -Lo $LOCAL_FILE $DOWNLOAD_URL
               chmod +x $LOCAL_FILE
               sudo mv $LOCAL_FILE /usr/local/bin
-              
+
               # Install saml2aws
               VERSION=2.20.0
               DOWNLOAD_URL=https://github.com/Versent/saml2aws/releases/download/v${VERSION}/saml2aws_${VERSION}_linux_amd64.tar.gz
@@ -128,18 +128,18 @@ stages:
               sudo mv saml2aws /usr/local/bin
 
               # Configure saml2aws
-              saml2aws configure --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto --session-duration=28800 --skip-prompt              
+              saml2aws configure --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto --session-duration=28800 --skip-prompt
 
               saml2aws login --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto --skip-prompt --force
               eval $(saml2aws script --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto)
             env:
-              SAML2AWS_PASSWORD: $(SAML2AWS_PASSWORD)          
+              SAML2AWS_PASSWORD: $(SAML2AWS_PASSWORD)
 
           # Download manifest from current artifacts pipeline
           - download: current
             artifact: manifests
             displayName: 'Download Artifact: manifests'
-          
+
           # Replace token values in yaml files with pipeline variables
           - task: qetza.replacetokens.replacetokens-task.replacetokens@3
             displayName: 'Replace tokens in yaml files'
@@ -148,7 +148,7 @@ stages:
               targetFiles: '*.yml'
               tokenPrefix: '$('
               tokenSuffix: ')'
-          
+
           # Upload the modified Kubernetes manifests to current Pipeline for easy debugging
           - publish: $(Pipeline.Workspace)/manifests/
             artifact: deployed-manifests
