@@ -1,5 +1,5 @@
 terraform {
-  source = "git::https://github.com/dfds/infrastructure-modules.git//compute/ecr-repo"
+  source = "git::https://github.com/dfds/infrastructure-modules.git//compute/ecr-repo?ref=0.2.14"
 }
 
 include {
@@ -12,9 +12,9 @@ inputs = {
     "harald/dbmigrations",
   ]
 
-  scan_images = true
+  scan_on_push = true
 
-  accounts = [
+  pull_principals= [
     "arn:aws:iam::738063116313:root",
   ]
 }
