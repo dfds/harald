@@ -7,7 +7,7 @@ include {
 }
 
 inputs = {
-  list_of_repos = [
+  names = [
     "harald/harald",
     "harald/dbmigrations",
   ]
