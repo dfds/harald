@@ -11,7 +11,8 @@ pr: none
 
 # Variables and Variable Groups used in rest of pipeline
 variables:
-  k8s-service-connection: 'Kubernetes-Hellman-Saml2aws'
+  #k8s-service-connection: 'Kubernetes-Hellman-Saml2aws'
+  k8s-service-connection: 'Kubernetes-Hellman-selfservice-deploy'
   KUBENAMESPACE: 'selfservice-herald-vbqkr'
   vmImage: 'ubuntu-latest'
 
