@@ -116,3 +116,8 @@ Ensure that the "user" installing the app is a dedicated user just for that purp
 * Improve resiliency.
 * Make sure all integrations are idempotent.
 * Better test coverage.
+
+
+## Deployment prerequisites
+
+If the scoped service account is missing for deployment, see https://wiki.dfds.cloud/en/teams/devex/selfservice/Kubernetes-selfservice-deployment-setup
