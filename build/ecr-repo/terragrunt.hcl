@@ -1,5 +1,5 @@
 terraform {
-  source = "git::https://github.com/dfds/infrastructure-modules.git//compute/ecr-repo?ref=0.2.14"
+  source = "git::https://github.com/dfds/infrastructure-modules.git//compute/ecr-repo?ref=0.2.92"
 }
 
 include {
