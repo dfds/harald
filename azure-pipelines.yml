@@ -130,7 +130,7 @@ stages:
               # Configure saml2aws
               saml2aws configure --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto --session-duration=28800 --skip-prompt
 
-              saml2aws login --disabled-keychain --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto --skip-prompt --force
+              saml2aws login --disable-keychain --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto --skip-prompt --force
               eval $(saml2aws script --url=https://adfs.dfds.com/adfs/ls/IdpInitiatedSignOn.aspx --idp-provider=ADFS --mfa=Auto)
             env:
               SAML2AWS_PASSWORD: $(SAML2AWS_PASSWORD)
