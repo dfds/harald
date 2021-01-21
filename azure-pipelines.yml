@@ -14,7 +14,7 @@ variables:
   #k8s-service-connection: 'Kubernetes-Hellman-Saml2aws'
   k8s-service-connection: 'Kubernetes-Hellman-selfservice-deploy'
   KUBENAMESPACE: 'selfservice-herald-vbqkr'
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-20.04'
 
 resources:
    containers:
