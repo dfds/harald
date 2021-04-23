@@ -11,7 +11,7 @@ namespace Harald.Infrastructure.Slack.Http.Request.Channel
             var serializedContent = JsonConvert.SerializeObject(new { name = channelName, validate }, _serializerSettings);
 
             Content = new StringContent(serializedContent, Encoding.UTF8, "application/json");
-            RequestUri = new System.Uri("api/channels.join", System.UriKind.Relative);
+            RequestUri = new System.Uri("api/conversations.join", System.UriKind.Relative);
             Method = HttpMethod.Post;
         }
     }
