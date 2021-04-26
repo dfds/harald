@@ -2,16 +2,16 @@
 using System.Net.Http;
 using System.Text;
 
-namespace Harald.Infrastructure.Slack.Http.Request.Channel
+namespace Harald.Infrastructure.Slack.Http.Request.Conversation
 {
-    public class InviteToChannelRequest : SlackRequest
+    public class RemoveFromConversationRequest : SlackRequest
     {
-        public InviteToChannelRequest(string channelIdentifier, string userId)
+        public RemoveFromConversationRequest(string channelIdentifier, string userId)
         {
             var serializedContent = JsonConvert.SerializeObject(new { channel = channelIdentifier, user = userId }, _serializerSettings);
 
             Content = new StringContent(serializedContent, Encoding.UTF8, "application/json");
-            RequestUri = new System.Uri("api/conversations.invite", System.UriKind.Relative);
+            RequestUri = new System.Uri("api/conversations.kick", System.UriKind.Relative);
             Method = HttpMethod.Post;
         }
     }

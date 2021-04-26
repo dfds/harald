@@ -52,7 +52,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)
         {
-            using (var response = await SendAsync(new CreateChannelRequest(channelName)))
+            using (var response = await SendAsync(new CreateConversationRequest(channelName)))
             { 
                 return await Parse<CreateChannelResponse>(response);
             }
@@ -70,7 +70,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task LeaveChannel(SlackChannelIdentifier channelIdentifier)
         {
-            using (var response = await SendAsync(new LeaveChannelRequest(channelIdentifier)))
+            using (var response = await SendAsync(new LeaveConversationRequest(channelIdentifier)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -78,7 +78,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task ArchiveChannel(SlackChannelIdentifier channelIdentifier)
         {
-            using (var response = await SendAsync(new ArchiveChannelRequest(channelIdentifier)))
+            using (var response = await SendAsync(new ArchiveConversationRequest(channelIdentifier)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -86,7 +86,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task RenameChannel(SlackChannelIdentifier channelIdentifier, SlackChannelName channelName)
         {
-            using (var response = await SendAsync(new RenameChannelRequest(channelIdentifier, channelName)))
+            using (var response = await SendAsync(new RenameConversationRequest(channelIdentifier, channelName)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -94,7 +94,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName, bool validate = false)
         {
-            using (var response = await SendAsync(new JoinChannelRequest(channelName, validate)))
+            using (var response = await SendAsync(new JoinConversationRequest(channelName, validate)))
             {
                 return await Parse<JoinChannelResponse>(response);
             }
@@ -111,7 +111,7 @@ namespace Harald.Infrastructure.Slack
 
             if (_tokenCache.Get(tokenCacheKey) == null)
             {
-                using (var response = await SendAsync(new ListChannelsRequest(token)))
+                using (var response = await SendAsync(new ListConversationRequest(token)))
                 {
                     var result = await Parse<ListChannelsResponse>(response);
                     _tokenCache.Set(tokenCacheKey, result.Channels, DateTimeOffset.Now.AddSeconds(10));
@@ -158,7 +158,7 @@ namespace Harald.Infrastructure.Slack
         {
             var userId = await GetUserId(email);
 
-            using (var response = await SendAsync(new InviteToChannelRequest(channelIdentifier, userId)))
+            using (var response = await SendAsync(new InviteToConversationRequest(channelIdentifier, userId)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -168,7 +168,7 @@ namespace Harald.Infrastructure.Slack
         {
             var userId = await GetUserId(email);
             
-            using (var response = await SendAsync(new RemoveFromChannelRequest(channelIdentifier, userId)))
+            using (var response = await SendAsync(new RemoveFromConversationRequest(channelIdentifier, userId)))
             {
                 await Parse<SlackResponse>(response);
             }

@@ -2,11 +2,11 @@
 using System.Net.Http;
 using System.Text;
 
-namespace Harald.Infrastructure.Slack.Http.Request.Channel
+namespace Harald.Infrastructure.Slack.Http.Request.Conversation
 {
-    public class CreateChannelRequest : SlackRequest
+    public class CreateConversationRequest : SlackRequest
     {
-        public CreateChannelRequest(string channelName, bool validate = true)
+        public CreateConversationRequest(string channelName, bool validate = true)
         {
             var serializedContent = JsonConvert.SerializeObject(new { name = channelName, validate = validate }, _serializerSettings);
 
