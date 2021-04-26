@@ -32,7 +32,7 @@ namespace Harald.Infrastructure.Slack
 
         Task ArchiveChannel(SlackChannelIdentifier channelIdentifier);
 
-        Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName, bool validate = false);
+        Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName);
 
         Task<IEnumerable<ChannelDto>> GetChannels(string token);
 

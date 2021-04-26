@@ -153,7 +153,7 @@ namespace Harald.Tests.TestDoubles
             return Task.CompletedTask;
         }
 
-        public Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName, bool validate = false)
+        public Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName)
         {
             return Task.FromResult(new JoinChannelResponse
             {

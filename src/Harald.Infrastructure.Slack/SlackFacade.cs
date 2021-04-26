@@ -1,4 +1,4 @@
-using System;
+using ExtensionMethods;
 using Harald.Infrastructure.Slack.Dto;
 using Harald.Infrastructure.Slack.Exceptions;
 using Harald.Infrastructure.Slack.Http.Request.Channel;
@@ -7,25 +7,24 @@ using Harald.Infrastructure.Slack.Http.Request.Notification;
 using Harald.Infrastructure.Slack.Http.Request.User;
 using Harald.Infrastructure.Slack.Http.Request.UserGroup;
 using Harald.Infrastructure.Slack.Http.Response;
+using Harald.Infrastructure.Slack.Http.Response.Channel;
 using Harald.Infrastructure.Slack.Http.Response.Conversation;
 using Harald.Infrastructure.Slack.Http.Response.Notification;
 using Harald.Infrastructure.Slack.Http.Response.User;
 using Harald.Infrastructure.Slack.Http.Response.UserGroup;
 using Harald.Infrastructure.Slack.Model;
-using Harald.Infrastructure.Slack.Http.Response.Channel;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using ExtensionMethods;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
-using Microsoft.Extensions.Logging;
 
 namespace Harald.Infrastructure.Slack
 {
@@ -92,9 +91,9 @@ namespace Harald.Infrastructure.Slack
             }
         }
 
-        public async Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName, bool validate = false)
+        public async Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName)
         {
-            using (var response = await SendAsync(new JoinConversationRequest(channelName, validate)))
+            using (var response = await SendAsync(new JoinConversationRequest(channelName)))
             {
                 return await Parse<JoinChannelResponse>(response);
             }
@@ -158,7 +157,7 @@ namespace Harald.Infrastructure.Slack
         {
             var userId = await GetUserId(email);
 
-            using (var response = await SendAsync(new InviteToConversationRequest(channelIdentifier, userId)))
+            using (var response = await SendAsync(new InviteToConversationRequest(channelIdentifier, new []{ userId })))
             {
                 await Parse<SlackResponse>(response);
             }
