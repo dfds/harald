@@ -15,14 +15,11 @@ namespace Harald.WebApi.Controllers
     public class ChannelsController : ControllerBase
     {
         private readonly ISlackFacade _slackFacade;
-        private readonly IConfiguration _configuration;
 
         public ChannelsController(
-            ISlackFacade slackFacade, 
-            IConfiguration configuration)
+            ISlackFacade slackFacade)
         {
             _slackFacade = slackFacade;
-            _configuration = configuration;
         }
 
         [HttpGet]
@@ -43,7 +40,7 @@ namespace Harald.WebApi.Controllers
             {
                 case ChannelTypeSlack _:
                 {
-                    var channelDtos = await _slackFacade.GetChannels(_configuration["SLACK_API_AUTH_TOKEN"]);
+                    var channelDtos = await _slackFacade.GetChannels();
                     
                     var connections = channelDtos.Select(c => 
                         new ChannelDto

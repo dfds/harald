@@ -1,4 +1,4 @@
-using System;
+using ExtensionMethods;
 using Harald.Infrastructure.Slack.Dto;
 using Harald.Infrastructure.Slack.Exceptions;
 using Harald.Infrastructure.Slack.Http.Request.Channel;
@@ -7,25 +7,24 @@ using Harald.Infrastructure.Slack.Http.Request.Notification;
 using Harald.Infrastructure.Slack.Http.Request.User;
 using Harald.Infrastructure.Slack.Http.Request.UserGroup;
 using Harald.Infrastructure.Slack.Http.Response;
+using Harald.Infrastructure.Slack.Http.Response.Channel;
 using Harald.Infrastructure.Slack.Http.Response.Conversation;
 using Harald.Infrastructure.Slack.Http.Response.Notification;
 using Harald.Infrastructure.Slack.Http.Response.User;
 using Harald.Infrastructure.Slack.Http.Response.UserGroup;
 using Harald.Infrastructure.Slack.Model;
-using Harald.Infrastructure.Slack.Http.Response.Channel;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using ExtensionMethods;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
-using Microsoft.Extensions.Logging;
 
 namespace Harald.Infrastructure.Slack
 {
@@ -34,7 +33,6 @@ namespace Harald.Infrastructure.Slack
         private readonly HttpClient _client;
         private readonly IDistributedCache _cache;
         private readonly IMemoryCache _tokenCache;
-        private readonly SlackOptions _options;
         private readonly string _botUserId;
         private readonly ILogger<SlackFacade> _logger;
 
@@ -43,7 +41,6 @@ namespace Harald.Infrastructure.Slack
             _client = client ?? new HttpClient() { BaseAddress = new System.Uri("https://slack.com", System.UriKind.Absolute) };
             _cache = cache;
             _tokenCache = tokenCache;
-            _options = options?.Value;
             _botUserId = options?.Value.SLACK_API_BOT_USER_ID ?? throw new SlackFacadeException("No SLACK_API_BOT_USER_ID was provided.");
             _logger = logger;
         }
@@ -52,7 +49,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)
         {
-            using (var response = await SendAsync(new CreateChannelRequest(channelName)))
+            using (var response = await SendAsync(new CreateConversationRequest(channelName)))
             { 
                 return await Parse<CreateChannelResponse>(response);
             }
@@ -70,7 +67,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task LeaveChannel(SlackChannelIdentifier channelIdentifier)
         {
-            using (var response = await SendAsync(new LeaveChannelRequest(channelIdentifier)))
+            using (var response = await SendAsync(new LeaveConversationRequest(channelIdentifier)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -78,7 +75,7 @@ namespace Harald.Infrastructure.Slack
 
         public async Task ArchiveChannel(SlackChannelIdentifier channelIdentifier)
         {
-            using (var response = await SendAsync(new ArchiveChannelRequest(channelIdentifier)))
+            using (var response = await SendAsync(new ArchiveConversationRequest(channelIdentifier)))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -86,32 +83,27 @@ namespace Harald.Infrastructure.Slack
 
         public async Task RenameChannel(SlackChannelIdentifier channelIdentifier, SlackChannelName channelName)
         {
-            using (var response = await SendAsync(new RenameChannelRequest(channelIdentifier, channelName)))
+            using (var response = await SendAsync(new RenameConversationRequest(channelIdentifier, channelName)))
             {
                 await Parse<SlackResponse>(response);
             }
         }
 
-        public async Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName, bool validate = false)
+        public async Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName)
         {
-            using (var response = await SendAsync(new JoinChannelRequest(channelName, validate)))
+            using (var response = await SendAsync(new JoinConversationRequest(channelName)))
             {
                 return await Parse<JoinChannelResponse>(response);
             }
         }
 
-        public async Task<IEnumerable<ChannelDto>> GetChannels(string token = null)
+        public async Task<IEnumerable<ChannelDto>> GetChannels()
         {
-            var tokenCacheKey = $"SlackGetChannels.{token}";
-
-            if(string.IsNullOrEmpty(token))
-            { 
-                token = _options?.SLACK_API_AUTH_TOKEN;
-            }
+            var tokenCacheKey = $"SlackGetChannels.{_client.DefaultRequestHeaders.Authorization.Parameter}";
 
             if (_tokenCache.Get(tokenCacheKey) == null)
             {
-                using (var response = await SendAsync(new ListChannelsRequest(token)))
+                using (var response = await SendAsync(new ListConversationRequest()))
                 {
                     var result = await Parse<ListChannelsResponse>(response);
                     _tokenCache.Set(tokenCacheKey, result.Channels, DateTimeOffset.Now.AddSeconds(10));
@@ -120,7 +112,6 @@ namespace Harald.Infrastructure.Slack
             }
             
             return _tokenCache.Get<IEnumerable<ChannelDto>>(tokenCacheKey);
-
         }
 
         public async Task<SendNotificationResponse> SendNotificationToChannel(SlackChannelIdentifier channelIdentifier, string message)
@@ -158,7 +149,7 @@ namespace Harald.Infrastructure.Slack
         {
             var userId = await GetUserId(email);
 
-            using (var response = await SendAsync(new InviteToChannelRequest(channelIdentifier, userId)))
+            using (var response = await SendAsync(new InviteToConversationRequest(channelIdentifier, new []{ userId })))
             {
                 await Parse<SlackResponse>(response);
             }
@@ -168,7 +159,7 @@ namespace Harald.Infrastructure.Slack
         {
             var userId = await GetUserId(email);
             
-            using (var response = await SendAsync(new RemoveFromChannelRequest(channelIdentifier, userId)))
+            using (var response = await SendAsync(new RemoveFromConversationRequest(channelIdentifier, userId)))
             {
                 await Parse<SlackResponse>(response);
             }

@@ -232,12 +232,12 @@ namespace Harald.Tests.TestDoubles
             throw new NotImplementedException();
         }
 
-        public Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName, bool validate = false)
+        public Task<JoinChannelResponse> JoinChannel(SlackChannelName channelName)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<ChannelDto>> GetChannels(string token)
+        public Task<IEnumerable<ChannelDto>> GetChannels()
         {
             throw new NotImplementedException();
         }

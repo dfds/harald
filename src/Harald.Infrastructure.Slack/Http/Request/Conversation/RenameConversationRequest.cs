@@ -2,16 +2,16 @@
 using System.Net.Http;
 using System.Text;
 
-namespace Harald.Infrastructure.Slack.Http.Request.Channel
+namespace Harald.Infrastructure.Slack.Http.Request.Conversation
 {
-    public class RenameChannelRequest : SlackRequest
+    public class RenameConversationRequest : SlackRequest
     {
-        public RenameChannelRequest(string channelIdentifier, string channelName)
+        public RenameConversationRequest(string channelIdentifier, string channelName)
         {
             var serializedContent = JsonConvert.SerializeObject(new { channel = channelIdentifier, name = channelName }, _serializerSettings);
 
             Content = new StringContent(serializedContent, Encoding.UTF8, "application/json");
-            RequestUri = new System.Uri("api/channels.rename", System.UriKind.Relative);
+            RequestUri = new System.Uri("api/conversations.rename", System.UriKind.Relative);
             Method = HttpMethod.Post;
         }
     }
