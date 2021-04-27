@@ -162,7 +162,7 @@ namespace Harald.Tests.TestDoubles
             });
         }
 
-        public Task<IEnumerable<ChannelDto>> GetChannels(string token)
+        public Task<IEnumerable<ChannelDto>> GetChannels()
         {
             return Task.FromResult(new[] { new ChannelDto() { Id = Guid.NewGuid().ToString(), Name = "FooBar1" },
                                             new ChannelDto() { Id = Guid.NewGuid().ToString(), Name = "FooBar2" }}

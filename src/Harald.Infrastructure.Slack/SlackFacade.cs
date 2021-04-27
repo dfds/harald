@@ -33,7 +33,6 @@ namespace Harald.Infrastructure.Slack
         private readonly HttpClient _client;
         private readonly IDistributedCache _cache;
         private readonly IMemoryCache _tokenCache;
-        private readonly SlackOptions _options;
         private readonly string _botUserId;
         private readonly ILogger<SlackFacade> _logger;
 
@@ -42,7 +41,6 @@ namespace Harald.Infrastructure.Slack
             _client = client ?? new HttpClient() { BaseAddress = new System.Uri("https://slack.com", System.UriKind.Absolute) };
             _cache = cache;
             _tokenCache = tokenCache;
-            _options = options?.Value;
             _botUserId = options?.Value.SLACK_API_BOT_USER_ID ?? throw new SlackFacadeException("No SLACK_API_BOT_USER_ID was provided.");
             _logger = logger;
         }
@@ -99,18 +97,13 @@ namespace Harald.Infrastructure.Slack
             }
         }
 
-        public async Task<IEnumerable<ChannelDto>> GetChannels(string token = null)
+        public async Task<IEnumerable<ChannelDto>> GetChannels()
         {
-            var tokenCacheKey = $"SlackGetChannels.{token}";
-
-            if(string.IsNullOrEmpty(token))
-            { 
-                token = _options?.SLACK_API_AUTH_TOKEN;
-            }
+            var tokenCacheKey = $"SlackGetChannels.{_client.DefaultRequestHeaders.Authorization.Parameter}";
 
             if (_tokenCache.Get(tokenCacheKey) == null)
             {
-                using (var response = await SendAsync(new ListConversationRequest(token)))
+                using (var response = await SendAsync(new ListConversationRequest()))
                 {
                     var result = await Parse<ListChannelsResponse>(response);
                     _tokenCache.Set(tokenCacheKey, result.Channels, DateTimeOffset.Now.AddSeconds(10));
@@ -119,7 +112,6 @@ namespace Harald.Infrastructure.Slack
             }
             
             return _tokenCache.Get<IEnumerable<ChannelDto>>(tokenCacheKey);
-
         }
 
         public async Task<SendNotificationResponse> SendNotificationToChannel(SlackChannelIdentifier channelIdentifier, string message)

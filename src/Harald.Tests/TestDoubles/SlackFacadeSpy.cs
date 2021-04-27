@@ -237,7 +237,7 @@ namespace Harald.Tests.TestDoubles
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<ChannelDto>> GetChannels(string token)
+        public Task<IEnumerable<ChannelDto>> GetChannels()
         {
             throw new NotImplementedException();
         }

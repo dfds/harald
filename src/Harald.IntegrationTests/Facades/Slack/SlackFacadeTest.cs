@@ -140,13 +140,11 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             // Arrange
             var sut = new SlackFacade(_httpClient, _slackOptions, null, new MemoryCache(new MemoryCacheOptions()));
-            var bearerToken = _configuration.SLACK_TESTING_API_AUTH_TOKEN;
 
             //Act
-            var channels = await sut.GetChannels(bearerToken);
+            var channels = await sut.GetChannels();
 
             // Assert
-            Assert.True(!string.IsNullOrEmpty(bearerToken));
             Assert.True(channels != null);
         }
         
@@ -154,7 +152,7 @@ namespace Harald.IntegrationTests.Facades.Slack
         {
             var httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("https://slack.com");
-            var authToken = _configuration.SLACK_TESTING_API_AUTH_TOKEN;
+            var authToken = _configuration.SLACK_API_AUTH_TOKEN;
             
             httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {authToken}");
 
