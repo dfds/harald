@@ -24,18 +24,21 @@ namespace Harald.WebApi.Application.EventHandlers
                 $"Get-ADUser \"CN=IT BuildSource DevEx,OU=DFDS AS,OU=Mailboxes,OU=Accounts,OU=DFDS,DC=dk,DC=dfds,DC=root\" | Set-ADUser -Add @{{proxyAddresses=\"smtp:{domainEvent.Payload.RoleEmail}\"}}";
             var installToolsCmd =
                 $"Get-WindowsCapability -Online | ? {{$_.Name -like 'Rsat.ActiveDirectory.DS-LDS.Tools*'}} | Add-WindowsCapability -Online";
-            var addDeployCredentials = $"ROOT_ID={domainEvent.Payload.CapabilityRootId} ACCOUNT_ID={domainEvent.Payload.AccountId} ./kube-config-generator.sh";
+            var addDeployCredentialsBash = $"ROOT_ID={domainEvent.Payload.CapabilityRootId} ACCOUNT_ID={domainEvent.Payload.AccountId} ./kube-config-generator.sh";
+            var addDeployCredentialsPS = $"./kube-config-generator.sh -RootId {domainEvent.Payload.CapabilityRootId} -AccountId {domainEvent.Payload.AccountId}";
 
             var sb = new StringBuilder();
 
             sb.AppendLine($"An AWS Context account has been created for ContextId: {domainEvent.Payload.ContextId}");
-            sb.AppendLine($"Please execute the following command:");
-            sb.AppendLine(addUserCmd);
-            sb.AppendLine($"Should you not have RSAT tools installed, please do so with command:");
-            sb.AppendLine(installToolsCmd);
-            sb.AppendLine("---");
-            sb.AppendLine($"Please execute the following script in K8s root and AWS prime context for this repo https://github.com/dfds/ded-toolbox/tree/master/k8s-service-account-config-to-ssm:");
-            sb.AppendLine(addDeployCredentials);
+            sb.AppendLine("\n*Add email address to shared mailbox*");
+            sb.AppendLine("Execute the following Powershell command:");
+            sb.AppendLine($"`{addUserCmd}`");
+            // sb.AppendLine($"Should you not have RSAT tools installed, please do so with command:");
+            // sb.AppendLine(installToolsCmd);
+            sb.AppendLine($"\n*Generate k8s service account*");
+            sb.AppendLine($"Execute either script from github.com/dfds/ce-toolbox/k8s-service-account-config-to-ssm.");
+            sb.AppendLine($"Bash: `{addDeployCredentialsBash}`");
+            sb.AppendLine($"Powershell: `{addDeployCredentialsPS}`");
 
             var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
             await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId.ToString(), sb.ToString());

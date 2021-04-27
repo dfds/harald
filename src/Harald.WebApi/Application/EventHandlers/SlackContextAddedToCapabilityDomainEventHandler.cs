@@ -45,17 +45,18 @@ namespace Harald.WebApi.Application.EventHandlers
 
         public static string CreateMessage(ContextAddedToCapabilityDomainEvent domainEvent, string xCorrelationId)
         {
-            var message = "Context added to capability\n" +
-                          "run the following command from https://github.com/dfds/aws-account-manifests:\n" +
-                          "---\n" +
-                          $"CORRELATION_ID=\"{xCorrelationId}\" \\\n" +
-                          $"CAPABILITY_NAME=\"{domainEvent.Payload.CapabilityName}\" \\\n" +
-                          $"CAPABILITY_ID=\"{domainEvent.Payload.CapabilityId}\" \\\n" +
-                          $"CAPABILITY_ROOT_ID=\"{domainEvent.Payload.CapabilityRootId}\" \\\n" +
-                          $"ACCOUNT_NAME=\"{domainEvent.Payload.CapabilityRootId}\" \\\n" + // OBS: for now account name and capabilty root id is the same by design
-                          $"CONTEXT_NAME=\"{domainEvent.Payload.ContextName}\" \\\n" +
-                          $"CONTEXT_ID=\"{domainEvent.Payload.ContextId}\" \\\n" +
-                          "./generate-tfvars.sh";
+            var message =   "New capability context created.\n" +
+                            "\nRun the following command from github.com/dfds/aws-account-manifests:\n" +
+                            "\n```\n" +
+                            $"CORRELATION_ID=\"{xCorrelationId}\" \\\n" +
+                            $"CAPABILITY_NAME=\"{domainEvent.Payload.CapabilityName}\" \\\n" +
+                            $"CAPABILITY_ID=\"{domainEvent.Payload.CapabilityId}\" \\\n" +
+                            $"CAPABILITY_ROOT_ID=\"{domainEvent.Payload.CapabilityRootId}\" \\\n" +
+                            $"ACCOUNT_NAME=\"{domainEvent.Payload.CapabilityRootId}\" \\\n" + // OBS: for now account name and capabilty root id is the same by design
+                            $"CONTEXT_NAME=\"{domainEvent.Payload.ContextName}\" \\\n" +
+                            $"CONTEXT_ID=\"{domainEvent.Payload.ContextId}\" \\\n" +
+                            "./generate-tfvars.sh" +
+                            "\n```";
 
             return message;
         }
