@@ -58,7 +58,7 @@ stages:
         ./pipeline.sh $(Build.BuildId) $(System.DefaultWorkingDirectory)
       env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
-        SLACK_TESTING_API_AUTH_TOKEN: $(SLACK_TESTING_API_AUTH_TOKEN)
+        SLACK_API_AUTH_TOKEN: $(SLACK_API_AUTH_TOKEN)
         SLACK_TESTING_USER_EMAIL: $(SLACK_TESTING_USER_EMAIL)
         SLACK_API_BOT_USER_ID: $(SLACK_API_BOT_USER_ID)
       displayName: Pipeline Bash Script
