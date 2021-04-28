@@ -25,17 +25,17 @@ namespace Harald.WebApi.Application.EventHandlers
             var installToolsCmd =
                 $"Get-WindowsCapability -Online | ? {{$_.Name -like 'Rsat.ActiveDirectory.DS-LDS.Tools*'}} | Add-WindowsCapability -Online";
             var addDeployCredentialsBash = $"ROOT_ID={domainEvent.Payload.CapabilityRootId} ACCOUNT_ID={domainEvent.Payload.AccountId} ./kube-config-generator.sh";
-            var addDeployCredentialsPS = $"./kube-config-generator.sh -RootId {domainEvent.Payload.CapabilityRootId} -AccountId {domainEvent.Payload.AccountId}";
+            var addDeployCredentialsPS = $"./kube-config-generator.ps1 -RootId {domainEvent.Payload.CapabilityRootId} -AccountId {domainEvent.Payload.AccountId}";
 
             var sb = new StringBuilder();
 
-            sb.AppendLine($"An AWS Context account has been created for ContextId: {domainEvent.Payload.ContextId}");
-            sb.AppendLine("\n*Add email address to shared mailbox*");
+            sb.AppendLine($"*An AWS Context account has been created for ContextId: {domainEvent.Payload.ContextId}*");
+            sb.AppendLine("\n_Add email address to shared mailbox_");
             sb.AppendLine("Execute the following Powershell command:");
             sb.AppendLine($"`{addUserCmd}`");
             // sb.AppendLine($"Should you not have RSAT tools installed, please do so with command:");
             // sb.AppendLine(installToolsCmd);
-            sb.AppendLine($"\n*Generate k8s service account*");
+            sb.AppendLine($"\n_Generate k8s service account_");
             sb.AppendLine($"Execute either script from github.com/dfds/ce-toolbox/k8s-service-account-config-to-ssm.");
             sb.AppendLine($"Bash: `{addDeployCredentialsBash}`");
             sb.AppendLine($"Powershell: `{addDeployCredentialsPS}`");
