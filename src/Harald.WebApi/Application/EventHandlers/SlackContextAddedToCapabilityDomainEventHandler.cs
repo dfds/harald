@@ -45,7 +45,7 @@ namespace Harald.WebApi.Application.EventHandlers
 
         public static string CreateMessage(ContextAddedToCapabilityDomainEvent domainEvent, string xCorrelationId)
         {
-            var message =   "New capability context created.\n" +
+            var message =   "*New capability context created*\n" +
                             "\nRun the following command from github.com/dfds/aws-account-manifests:\n" +
                             "\n```\n" +
                             $"CORRELATION_ID=\"{xCorrelationId}\" \\\n" +
