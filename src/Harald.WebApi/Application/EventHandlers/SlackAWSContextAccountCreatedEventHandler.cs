@@ -24,9 +24,14 @@ namespace Harald.WebApi.Application.EventHandlers
                 $"Get-ADUser \"CN=IT BuildSource DevEx,OU=DFDS AS,OU=Mailboxes,OU=Accounts,OU=DFDS,DC=dk,DC=dfds,DC=root\" | Set-ADUser -Add @{{proxyAddresses=\"smtp:{domainEvent.Payload.RoleEmail}\"}}";
             var installToolsCmd =
                 $"Get-WindowsCapability -Online | ? {{$_.Name -like 'Rsat.ActiveDirectory.DS-LDS.Tools*'}} | Add-WindowsCapability -Online";
-            var addDeployCredentialsBash = $"ROOT_ID={domainEvent.Payload.CapabilityRootId} ACCOUNT_ID={domainEvent.Payload.AccountId} ./kube-config-generator.sh";
-            var addDeployCredentialsPS = $"./kube-config-generator.ps1 -RootId {domainEvent.Payload.CapabilityRootId} -AccountId {domainEvent.Payload.AccountId}";
+            var addDeployCredentialsBash = $"AWS_ROLE_CLOUD_ADMIN=\"[Cloud Administrator Role ARN]\"\\\n" +
+                                           $"AWS_ROLE_ADFS_ADMIN=\"[ADFS Administrator Role ARN]\"\\\n" +
+                                           $"poetry run python ./kube_config_generator.py -r {domainEvent.Payload.CapabilityRootId} -a {domainEvent.Payload.AccountId}";
+            var addDeployCredentialsPS = $"$ENV:AWS_ROLE_CLOUD_ADMIN=\"[Cloud Administrator Role ARN]\"\\\n" +
+                                         $"$ENV:AWS_ROLE_ADFS_ADMIN=\"[ADFS Administrator Role ARN]\"\\\n" +
+                                         $"poetry run python .\kube_config_generator.py -r {domainEvent.Payload.CapabilityRootId} -a {domainEvent.Payload.AccountId}";
 
+            // poetry run python kube_config_generator.py -r {domainEvent.Payload.CapabilityRootId} -a {domainEvent.Payload.AccountId}
             var sb = new StringBuilder();
 
             sb.AppendLine($"*An AWS Context account has been created for ContextId: {domainEvent.Payload.ContextId}*");
@@ -36,7 +41,7 @@ namespace Harald.WebApi.Application.EventHandlers
             // sb.AppendLine($"Should you not have RSAT tools installed, please do so with command:");
             // sb.AppendLine(installToolsCmd);
             sb.AppendLine($"\n_Generate k8s service account_");
-            sb.AppendLine($"Execute either script from github.com/dfds/ce-toolbox/k8s-service-account-config-to-ssm.");
+            sb.AppendLine($"Execute the Python script from github.com/dfds/ce-toolbox/k8s-service-account-config-to-ssm.  Please ensure that the two environment variables are modified to include the correct Role ARNs.");
             sb.AppendLine($"Bash: `{addDeployCredentialsBash}`");
             sb.AppendLine($"Powershell: `{addDeployCredentialsPS}`");
 
