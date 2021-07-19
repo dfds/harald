@@ -29,7 +29,7 @@ namespace Harald.WebApi.Application.EventHandlers
                                            $"poetry run python ./kube_config_generator.py -r {domainEvent.Payload.CapabilityRootId} -a {domainEvent.Payload.AccountId}";
             var addDeployCredentialsPS = $"$ENV:AWS_ROLE_CLOUD_ADMIN=\"[Cloud Administrator Role ARN]\"\\\n" +
                                          $"$ENV:AWS_ROLE_ADFS_ADMIN=\"[ADFS Administrator Role ARN]\"\\\n" +
-                                         $"poetry run python .\kube_config_generator.py -r {domainEvent.Payload.CapabilityRootId} -a {domainEvent.Payload.AccountId}";
+                                         $"poetry run python .\\kube_config_generator.py -r {domainEvent.Payload.CapabilityRootId} -a {domainEvent.Payload.AccountId}";
 
             // poetry run python kube_config_generator.py -r {domainEvent.Payload.CapabilityRootId} -a {domainEvent.Payload.AccountId}
             var sb = new StringBuilder();
