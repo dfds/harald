@@ -42,8 +42,8 @@ namespace Harald.WebApi.Application.EventHandlers
             // sb.AppendLine(installToolsCmd);
             sb.AppendLine($"\n_Generate k8s service account_");
             sb.AppendLine($"Execute the Python script from github.com/dfds/ce-toolbox/k8s-service-account-config-to-ssm.  Please ensure that the two environment variables are modified to include the correct Role ARNs.");
-            sb.AppendLine($"Bash: `{addDeployCredentialsBash}`");
-            sb.AppendLine($"Powershell: `{addDeployCredentialsPS}`");
+            sb.AppendLine($"Bash:\n```{addDeployCredentialsBash}```");
+            sb.AppendLine($"Powershell:\n```{addDeployCredentialsPS}```");
 
             var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
             await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId.ToString(), sb.ToString());
