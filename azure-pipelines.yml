@@ -19,12 +19,12 @@ variables:
 resources:
    containers:
      - container: ci_runner
-       image: dfdsdk/prime-pipeline:0.5.9
+       image: dfdsdk/prime-pipeline:0.6.2
        env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         AWS_PROFILE: "default"
      - container: cd_runner
-       image: dfdsdk/prime-pipeline:0.5.9
+       image: dfdsdk/prime-pipeline:0.6.2
        env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         PGPASSWORD: $(PGPASSWORD)
