@@ -22,8 +22,10 @@ namespace Harald.WebApi.Application.EventHandlers
         {
             var addUserCmd =
                 $"Get-ADUser \"CN=IT BuildSource DevEx,OU=DFDS AS,OU=Mailboxes,OU=Accounts,OU=DFDS,DC=dk,DC=dfds,DC=root\" | Set-ADUser -Add @{{proxyAddresses=\"smtp:{domainEvent.Payload.RoleEmail}\"}}";
-            var pipelineVariableValues = $"AccountID: {domainEvent.Payload.AccountId}\n" +
-                                         $"RootID: {domainEvent.Payload.CapabilityRootId}\n";
+            var pipelineVariableValues = $"Password: Your Active Directory password\n" +
+                                         $"AccountID: {domainEvent.Payload.AccountId}\n" +
+                                         $"RootID: {domainEvent.Payload.CapabilityRootId}\n" +
+                                         $"Username: Your Active Directory Username in UPN format (e.g. myid@dfds.com)";
 
             // poetry run python kube_config_generator.py -r {domainEvent.Payload.CapabilityRootId} -a {domainEvent.Payload.AccountId}
             var sb = new StringBuilder();
@@ -33,7 +35,7 @@ namespace Harald.WebApi.Application.EventHandlers
             sb.AppendLine("Execute the following Powershell command:");
             sb.AppendLine($"`{addUserCmd}`");
             sb.AppendLine($"\n_Generate k8s service account_");
-            sb.AppendLine($"Run the Azure DevOps Pipeline __k8s-service-account-config-to-ssm__.\nPlease ensure you provide values for the four variables attached to the pipeline.");
+            sb.AppendLine($"Run the Azure DevOps Pipeline *k8s-service-account-config-to-ssm*.\nPlease ensure you provide values for the four variables attached to the pipeline.");
             sb.AppendLine($"```{pipelineVariableValues}```");
 
             var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
