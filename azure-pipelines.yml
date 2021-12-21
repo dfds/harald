@@ -19,7 +19,7 @@ variables:
 resources:
    containers:
      - container: ci_runner
-       image: dfdsdk/prime-pipeline:0.6.2
+       image: dfdsdk/prime-pipeline:0.6.6
        env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         AWS_PROFILE: "default"
