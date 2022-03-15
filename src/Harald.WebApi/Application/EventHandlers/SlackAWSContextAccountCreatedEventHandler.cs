@@ -38,8 +38,7 @@ namespace Harald.WebApi.Application.EventHandlers
             sb.AppendLine($"Run the Azure DevOps Pipeline *k8s-service-account-config-to-ssm*.\nPlease ensure you provide values for the four variables attached to the pipeline.");
             sb.AppendLine($"```{pipelineVariableValues}```");
 
-            var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
-            await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId.ToString(), sb.ToString());
+            await _slackFacade.SendNotificationToChannel(_slackFacade.GetDefaultNotificationChannelId(), sb.ToString());
 
             // Send message to Capability Slack channel
             var capabilities = await _capabilityRepository.GetById(domainEvent.Payload.CapabilityId);

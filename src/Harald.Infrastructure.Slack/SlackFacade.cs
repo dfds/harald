@@ -35,6 +35,7 @@ namespace Harald.Infrastructure.Slack
         private readonly IMemoryCache _tokenCache;
         private readonly string _botUserId;
         private readonly ILogger<SlackFacade> _logger;
+        private readonly string _defaultNotificationChannelId;
 
         public SlackFacade( HttpClient client = null, IOptions<SlackOptions> options = null, IDistributedCache cache = null, IMemoryCache tokenCache = null, ILogger<SlackFacade> logger = null)
         {
@@ -43,9 +44,12 @@ namespace Harald.Infrastructure.Slack
             _tokenCache = tokenCache;
             _botUserId = options?.Value.SLACK_API_BOT_USER_ID ?? throw new SlackFacadeException("No SLACK_API_BOT_USER_ID was provided.");
             _logger = logger;
+            _defaultNotificationChannelId = options?.Value.SLACK_DEFAULT_NOTIFICATION_CHANNEL_ID ?? throw new SlackFacadeException("No SLACK_DEFAULT_NOTIFICATION_CHANNEL_ID was provided.");
         }
 
         public string GetBotUserId() => _botUserId;
+
+        public string GetDefaultNotificationChannelId() => _defaultNotificationChannelId;
 
         public async Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)
         {

@@ -29,8 +29,7 @@ namespace Harald.WebApi.Application.EventHandlers
 
             var message = CreateMessage(domainEvent, _externalEventMetaDataStore.XCorrelationId);
 
-            var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
-            await _slackFacade.SendNotificationToChannel(hardCodedDedChannelId.ToString(), message);
+            await _slackFacade.SendNotificationToChannel(_slackFacade.GetDefaultNotificationChannelId(), message);
 
             // Send message to Capability Slack channels
             foreach (var capability in capabilities)
