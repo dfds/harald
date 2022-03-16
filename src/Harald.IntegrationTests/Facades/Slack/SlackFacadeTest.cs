@@ -22,7 +22,8 @@ namespace Harald.IntegrationTests.Facades.Slack
             _configuration = TestHelper.GetApplicationConfiguration(Environment.CurrentDirectory);
             _slackOptions = Options.Create(new SlackOptions
             {
-                SLACK_API_BOT_USER_ID = _configuration.SLACK_API_BOT_USER_ID
+                SLACK_API_BOT_USER_ID = _configuration.SLACK_API_BOT_USER_ID,
+                SLACK_DEFAULT_NOTIFICATION_CHANNEL_ID = _configuration.SLACK_DEFAULT_NOTIFICATION_CHANNEL_ID
             });
             _httpClient = GetHttpClient();
         }

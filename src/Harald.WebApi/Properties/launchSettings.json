@@ -28,6 +28,7 @@
       "applicationUrl": "http://localhost:50900",
       "environmentVariables": {
         "SLACK_API_BOT_USER_ID": "This-is-not-an-user-id",
+        "SLACK_DEFAULT_NOTIFICATION_CHANNEL_ID": "CQD754GGL",
         "HARALD_DATABASE_CONNECTIONSTRING": "User ID=postgres;Password=p;Host=localhost;Port=5432;Database=harald_db;",
         "HARALD_KAFKA_BOOTSTRAP_SERVERS": "localhost:9092",
         "HARALD_KAFKA_GROUP_ID": "harald-consumer",
