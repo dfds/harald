@@ -49,7 +49,8 @@ namespace Harald.Tests.Application.EventHandlers
                 .HandleAsync(contextAddedToCapabilityDomainEvent);
             
             // Assert
-            Assert.NotEmpty(slackFacadeSpy.GetDefaultNotificationChannelId());
+            var dedChannelId = new SlackChannelIdentifier(slackFacadeSpy.GetDefaultNotificationChannelId());
+            Assert.NotEmpty(slackFacadeSpy.ChannelsMessages[dedChannelId]);
             Assert.NotEmpty(slackFacadeSpy.ChannelsMessages[capability.SlackChannelId.ToString()]);
             
         }
