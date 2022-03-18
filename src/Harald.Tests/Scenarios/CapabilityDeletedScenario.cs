@@ -73,8 +73,7 @@ namespace Harald.Tests.Scenarios
         {
             var slackFacadeSpy = (SlackFacadeSpy)_serviceProvider.GetService<ISlackFacade>();
 
-            var hardCodedDedChannelId = "GFYE9B99Q";
-           var dedMessages = slackFacadeSpy.ChannelsMessages.Where(pair => pair.Key == hardCodedDedChannelId);
+           var dedMessages = slackFacadeSpy.ChannelsMessages.Where(pair => pair.Key == slackFacadeSpy.GetDefaultNotificationChannelId());
            
            Assert.Contains(dedMessages, pair =>
            {

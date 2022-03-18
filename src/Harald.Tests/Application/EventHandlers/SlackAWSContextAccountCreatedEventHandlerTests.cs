@@ -12,7 +12,7 @@ namespace Harald.Tests.Application.EventHandlers
     {
 
         [Fact]
-        public void can_handle_domain_event()
+        public async void can_handle_domain_event()
         {
             var slackStub = new SlackFacadeStub(false);
             var capabilityRepositoryStub = new StubCapabilityRepository(new List<Guid>());
@@ -20,7 +20,7 @@ namespace Harald.Tests.Application.EventHandlers
             var eventData = DomainEventBuilder.BuildAWSContextAccountCreatedEventData();
             var @event = new AWSContextAccountCreatedDomainEvent(eventData);
 
-            sut.HandleAsync(@event);
+            await sut.HandleAsync(@event);
 
             Assert.True(slackStub.SendNotificationToChannelCalled);
         }

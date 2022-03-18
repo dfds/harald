@@ -91,6 +91,11 @@ namespace Harald.Tests.TestDoubles
             return "";
         }
 
+        public string GetDefaultNotificationChannelId()
+        {
+            return "";
+        }
+
         public SlackChannelName CreatedChannelName { get; private set; }
 
         public Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)

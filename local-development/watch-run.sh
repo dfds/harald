@@ -16,5 +16,6 @@ HARALD_KAFKA_GROUP_ID=harald-consumer \
 HARALD_KAFKA_ENABLE_AUTO_COMMIT=false \
 HARALD_START_METRIC_SERVER=false \
 SLACK_API_BOT_USER_ID="This-is-not-an-user-id" \
+SLACK_DEFAULT_NOTIFICATION_CHANNEL_ID="this-is-not-a-channel-id" \
 dotnet watch --project ./../src/Harald.WebApi/Harald.WebApi.csproj \
 run --server.urls "http://*:5123" --no-launch-profile

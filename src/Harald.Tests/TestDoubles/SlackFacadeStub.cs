@@ -56,6 +56,11 @@ namespace Harald.Tests.TestDoubles
             throw new NotImplementedException();
         }
 
+        public string GetDefaultNotificationChannelId()
+        {
+            return "AAA123BBB";
+        }
+
         public Task<CreateChannelResponse> CreateChannel(SlackChannelName channelName)
         {
             throw new System.NotImplementedException();

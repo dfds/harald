@@ -17,15 +17,13 @@ namespace Harald.WebApi.Application.EventHandlers
         }
 
         public async Task HandleAsync(CapabilityDeletedDomainEvent domainEvent)
-        {
-            var hardCodedDedChannelId = new ChannelId("GFYE9B99Q");
-            
+        {          
             var messageForDed = 
             $":x: Capability with Id: '{domainEvent.Payload.CapabilityId}' & name : '{domainEvent.Payload.CapabilityName}' have been deleted" + Environment.NewLine +
              "Please Do the needfull";
             
             await _slackFacade.SendNotificationToChannel(
-                hardCodedDedChannelId.ToString(), 
+                _slackFacade.GetDefaultNotificationChannelId(), 
                 messageForDed
             );
         }
