@@ -61,10 +61,18 @@ namespace Harald.WebApi.Application.EventHandlers
                     }
 
                     // Notify user that it has been removed.
-                    await _slackFacade.SendNotificationToUser(
-                        email: domainEvent.Payload.MemberEmail,
-                        message:
-                        $"Thank you for your contributions to capability {capability.Name}.\nYou have been removed from corresponding Slack channel and user group.");
+                    try
+                    {
+                        await _slackFacade.SendNotificationToUser(
+                            email: domainEvent.Payload.MemberEmail,
+                            message:
+                            $"Thank you for your contributions to capability {capability.Name}.\nYou have been removed from corresponding Slack channel and user group.");
+                    }
+                    catch (SlackFacadeException ex)
+                    {
+                        _logger.LogError($"Unable to send Slack message to user {domainEvent.Payload.MemberEmail}. This usually happens if the user has been disabled/removed from Slack.");
+                    }
+
                 }
             }
         }
