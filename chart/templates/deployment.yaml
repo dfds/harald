@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "harald.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- with .Values.global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end}}
+    app: {{ include "harald.fullname" . }}
+    component: harald
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "harald.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "harald.fullname" . }}
+        {{- with .Values.global.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end}}
+        logging_dfds_cloud_format_json: "true"
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+    spec:
+      {{- if .Values.priorityClass.enabled }}
+      priorityClassName: {{ .Values.priorityClass.name }}
+      {{- end }}
+      initContainers:
+      - name: dbmigrations
+        image: "{{ .Values.image.dbmigration.repository}}:{{ .Values.image.dbmigration.tag }}"
+        envFrom:
+        - secretRef:
+            name: harald-postgres
+        env:
+        - name: PGPORT
+          value: "5432"
+      containers:
+      - name: harald
+        image: "{{ .Values.image.repository}}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: 50900
+          name: web
+        - containerPort: 8080
+          name: metrics
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        envFrom:
+        - secretRef:
+            name: harald-postgres
+        - secretRef:
+            name: harald-kafka
+        - secretRef:
+            name: harald-slack
+        env:
+          - name: SLACK_API_BASE_URL
+            value: "https://slack.com"
+          - name: HARALD_DATABASE_CONNECTIONSTRING
+            valueFrom:
+              secretKeyRef:
+                name: harald-postgres
+                key: PGCONNSTRING
+          - name: HARALD_KAFKA_BOOTSTRAP_SERVERS
+            value: {{ .Values.harald.kafka.bootstrapServers }}
+          - name: HARALD_KAFKA_SASL_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: harald-kafka
+                key: KAFKA_SASL_USERNAME
+          - name: HARALD_KAFKA_SASL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: harald-kafka
+                key: KAFKA_SASL_PASSWORD
+          - name: HARALD_KAFKA_BROKER_VERSION_FALLBACK
+            value: {{ .Values.harald.kafka.brokerVersionFallback }}
+          - name: HARALD_KAFKA_API_VERSION_FALLBACK_MS
+            value: "{{ .Values.harald.kafka.apiVersionFallBack }}"
+          - name: HARALD_KAFKA_GROUP_ID
+            value: {{ .Values.harald.kafka.consumerGroupId }}
+          - name: HARALD_KAFKA_ENABLE_AUTO_COMMIT
+            value: "{{ .Values.harald.kafka.autoCommit }}"
+          - name: HARALD_KAFKA_SASL_MECHANISMS
+            value: {{ .Values.harald.kafka.saslMechanisms }}
+          - name: HARALD_KAFKA_SECURITY_PROTOCOL
+            value: {{ .Values.harald.kafka.securityProtocol }}
+        {{- if .Values.healthCheck.enabled }}
+        livenessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 60
+          timeoutSeconds: 5
+          httpGet:
+            port: web
+            path: /healthz
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 5
+          httpGet:
+            port: web
+            path: /healthz
+        {{- end }}
