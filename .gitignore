@@ -429,3 +429,4 @@ my-stuff/
 # terraform
 .terraform/
 .terragrunt-cache
+.terraform.lock.hcl
