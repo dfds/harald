@@ -97,7 +97,7 @@ stages:
         echo $AWS_ACCESS_KEY_ID
         echo "Key brackets:"
         echo $(AWS_ACCESS_KEY_ID)
-        aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile saml
+        aws configure set aws_access_key_id "$C_AWS_ACCESS_KEY_ID" --profile saml
         aws configure set aws_secret_access_key "$AWS_ACCESS_SECRET_KEY" --profile saml
         aws s3 ls --output json
         terragrunt apply --terragrunt-working-dir ./infrastructure/harald-postgres --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve -var="db_name=$(PGDBNAME)" -var="db_master_username=$(PGUSER)" -var="db_master_password=$(PGPASSWORD)"
