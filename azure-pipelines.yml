@@ -115,6 +115,10 @@ stages:
           steps:
           # Setup auth against k8s
           - bash: |
+              echo "Key no brackets:"
+              echo $AWS_ACCESS_KEY_ID
+              echo "Key brackets:"
+              echo $(AWS_ACCESS_KEY_ID)
               aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile saml
               aws configure set aws_secret_access_key $AWS_ACCESS_SECRET_KEY --profile saml
             env:
