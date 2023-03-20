@@ -102,8 +102,8 @@ stages:
         aws configure set aws_secret_access_key $AWS_ACCESS_SECRET_KEY --profile saml
         terragrunt apply --terragrunt-working-dir ./infrastructure/harald-postgres --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve -var="db_name=$(PGDBNAME)" -var="db_master_username=$(PGUSER)" -var="db_master_password=$(PGPASSWORD)"
       env:
-        AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
-        AWS_SECRET_ACCESS_KEY: $(AWS_ACCESS_SECRET_KEY)
+        # AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+        # AWS_SECRET_ACCESS_KEY: $(AWS_ACCESS_SECRET_KEY)
 
   # - deployment: K8s
   #   displayName: 'Deploy to Kubernetes'
