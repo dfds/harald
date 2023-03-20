@@ -84,8 +84,8 @@ stages:
 
 # Continuous Deployment steps
 - stage: CD
-  dependsOn: CI
-  condition: and(succeeded('CI'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  # dependsOn: CI
+  # condition: and(succeeded('CI'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   pool:
     vmImage: $(vmImage)
 
