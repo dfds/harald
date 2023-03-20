@@ -30,61 +30,61 @@ resources:
 
 stages:
 # Continuous Integration steps
-# - stage: CI
-#   pool:
-#     vmImage: $(vmImage)
-#   # Validation jobs
-#   jobs:
-#   # Build jobs
-#   - job: "Create_ECR"
-#     container: ci_runner
-#     steps:
-#     - bash:
-#         terragrunt apply-all --terragrunt-working-dir ./build --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve
+- stage: CI
+  pool:
+    vmImage: $(vmImage)
+  # Validation jobs
+  jobs:
+  # Build jobs
+  - job: "Create_ECR"
+    container: ci_runner
+    steps:
+    - bash:
+        terragrunt apply-all --terragrunt-working-dir ./build --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve
 
-#   - job: Build
-#     dependsOn: Create_ECR
-#     condition: succeeded('Create_ECR')
-#     steps:
-#     # - task: DotNetCoreInstaller@0
-#     #   inputs:
-#     #     version: '2.2.104' # replace this value with the version that you need for your project
-#     - bash: |
-#         sudo pip install setuptools
-#         sudo pip install awscli
-#         chmod +x ./pipeline.sh
-#         ./pipeline.sh $(Build.BuildId) $(System.DefaultWorkingDirectory)
-#       env:
-#         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
-#         SLACK_API_AUTH_TOKEN: $(SLACK_API_AUTH_TOKEN)
-#         SLACK_TESTING_USER_EMAIL: $(SLACK_TESTING_USER_EMAIL)
-#         SLACK_API_BOT_USER_ID: $(SLACK_API_BOT_USER_ID)
-#         SLACK_DEFAULT_NOTIFICATION_CHANNEL_ID: $(SLACK_DEFAULT_NOTIFICATION_CHANNEL)
-#       displayName: Pipeline Bash Script
+  - job: Build
+    dependsOn: Create_ECR
+    condition: succeeded('Create_ECR')
+    steps:
+    # - task: DotNetCoreInstaller@0
+    #   inputs:
+    #     version: '2.2.104' # replace this value with the version that you need for your project
+    - bash: |
+        sudo pip install setuptools
+        sudo pip install awscli
+        chmod +x ./pipeline.sh
+        ./pipeline.sh $(Build.BuildId) $(System.DefaultWorkingDirectory)
+      env:
+        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+        SLACK_API_AUTH_TOKEN: $(SLACK_API_AUTH_TOKEN)
+        SLACK_TESTING_USER_EMAIL: $(SLACK_TESTING_USER_EMAIL)
+        SLACK_API_BOT_USER_ID: $(SLACK_API_BOT_USER_ID)
+        SLACK_DEFAULT_NOTIFICATION_CHANNEL_ID: $(SLACK_DEFAULT_NOTIFICATION_CHANNEL)
+      displayName: Pipeline Bash Script
 
-#     - task: PublishTestResults@2
-#       displayName: Publish Test Results
-#       inputs:
-#         testRunner: VSTest
-#         testResultsFiles: testresults.trx
-#         searchFolder: '$(System.DefaultWorkingDirectory)/output'
-#       condition: succeededOrFailed()
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      inputs:
+        testRunner: VSTest
+        testResultsFiles: testresults.trx
+        searchFolder: '$(System.DefaultWorkingDirectory)/output'
+      condition: succeededOrFailed()
 
-#     - task: PublishCodeCoverageResults@1
-#       displayName: 'Publish code coverage'
-#       inputs:
-#         codeCoverageTool: Cobertura
-#         summaryFileLocation: '$(System.DefaultWorkingDirectory)/output/coverage.cobertura.xml'
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage'
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/output/coverage.cobertura.xml'
 
-#     # Upload Kubernetes manifests to current artifact Pipeline from folder /k8s
-#     - publish: $(System.DefaultWorkingDirectory)/k8s
-#       artifact: manifests
-#       displayName: 'Publish Artifact: manifests'
+    # Upload Kubernetes manifests to current artifact Pipeline from folder /k8s
+    - publish: $(System.DefaultWorkingDirectory)/k8s
+      artifact: manifests
+      displayName: 'Publish Artifact: manifests'
 
 # Continuous Deployment steps
 - stage: CD
-  # dependsOn: CI
-  # condition: and(succeeded('CI'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  dependsOn: CI
+  condition: and(succeeded('CI'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   pool:
     vmImage: $(vmImage)
 
@@ -93,68 +93,52 @@ stages:
     container: cd_runner
     steps:
     - bash: |
-        echo "Key no brackets:"
-        echo $C_AWS_ACCESS_KEY_ID
-        echo "Key brackets:"
-        echo $(C_AWS_ACCESS_KEY_ID)
         aws configure set aws_access_key_id $(C_AWS_ACCESS_KEY_ID) --profile saml
         aws configure set aws_secret_access_key $(AWS_SECRET_ACCESS_KEY) --profile saml
-        aws s3 ls --output json
         terragrunt apply --terragrunt-working-dir ./infrastructure/harald-postgres --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve -var="db_name=$(PGDBNAME)" -var="db_master_username=$(PGUSER)" -var="db_master_password=$(PGPASSWORD)"
-      env:
-        AWS_REGION: eu-central-1
-        # AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
-        # AWS_SECRET_ACCESS_KEY: $(AWS_ACCESS_SECRET_KEY)
 
-  # - deployment: K8s
-  #   displayName: 'Deploy to Kubernetes'
-  #   variables:
-  #     AWS_PROFILE: "saml"
-  #   environment: 'Hellman'
-  #   dependsOn: Create_Infrastruture_On_AWS
-  #   condition: succeeded('Create_Infrastruture_On_AWS')
+  - deployment: K8s
+    displayName: 'Deploy to Kubernetes'
+    variables:
+      AWS_PROFILE: "saml"
+    environment: 'Hellman'
+    dependsOn: Create_Infrastruture_On_AWS
+    condition: succeeded('Create_Infrastruture_On_AWS')
 
-  #   strategy:
-  #     runOnce:
-  #       deploy:
-  #         steps:
-  #         # Setup auth against k8s
-  #         - bash: |
-  #             echo "Key no brackets:"
-  #             echo $AWS_ACCESS_KEY_ID
-  #             echo "Key brackets:"
-  #             echo $(AWS_ACCESS_KEY_ID)
-  #             aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile saml
-  #             aws configure set aws_secret_access_key "$AWS_ACCESS_SECRET_KEY" --profile saml
-  #           env:
-  #             AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
-  #             AWS_SECRET_ACCESS_KEY: $(AWS_ACCESS_SECRET_KEY)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          # Setup auth against k8s
+          - bash: |
+              aws configure set aws_access_key_id $(C_AWS_ACCESS_KEY_ID) --profile saml
+              aws configure set aws_secret_access_key $(AWS_SECRET_ACCESS_KEY) --profile saml
 
-  #         # Download manifest from current artifacts pipeline
-  #         - download: current
-  #           artifact: manifests
-  #           displayName: 'Download Artifact: manifests'
+          # Download manifest from current artifacts pipeline
+          - download: current
+            artifact: manifests
+            displayName: 'Download Artifact: manifests'
 
-  #         # Replace token values in yaml files with pipeline variables
-  #         - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-  #           displayName: 'Replace tokens in yaml files'
-  #           inputs:
-  #             rootDirectory: '$(Pipeline.Workspace)/manifests/'
-  #             targetFiles: '*.yml'
-  #             tokenPrefix: '$('
-  #             tokenSuffix: ')'
+          # Replace token values in yaml files with pipeline variables
+          - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+            displayName: 'Replace tokens in yaml files'
+            inputs:
+              rootDirectory: '$(Pipeline.Workspace)/manifests/'
+              targetFiles: '*.yml'
+              tokenPrefix: '$('
+              tokenSuffix: ')'
 
-  #         # Upload the modified Kubernetes manifests to current Pipeline for easy debugging
-  #         - publish: $(Pipeline.Workspace)/manifests/
-  #           artifact: deployed-manifests
-  #           displayName: 'Publish Artifact: manifests'
+          # Upload the modified Kubernetes manifests to current Pipeline for easy debugging
+          - publish: $(Pipeline.Workspace)/manifests/
+            artifact: deployed-manifests
+            displayName: 'Publish Artifact: manifests'
 
-  #         # Apply Kubernetes manifests
-  #         - task: Kubernetes@1
-  #           displayName: 'Apply manifests'
-  #           inputs:
-  #             connectionType: Kubernetes Service Connection
-  #             kubernetesServiceEndpoint: '$(k8s-service-connection)'
-  #             namespace: '$(KUBENAMESPACE)'
-  #             command: apply
-  #             arguments: '-f $(Pipeline.Workspace)/manifests/'
+          # Apply Kubernetes manifests
+          - task: Kubernetes@1
+            displayName: 'Apply manifests'
+            inputs:
+              connectionType: Kubernetes Service Connection
+              kubernetesServiceEndpoint: '$(k8s-service-connection)'
+              namespace: '$(KUBENAMESPACE)'
+              command: apply
+              arguments: '-f $(Pipeline.Workspace)/manifests/'
