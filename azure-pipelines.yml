@@ -20,8 +20,8 @@ resources:
      - container: ci_runner
        image: dfdsdk/prime-pipeline:0.6.7
        env:
-        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
-        AWS_PROFILE: "default"
+        # AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+        AWS_PROFILE: "saml"
      - container: cd_runner
        image: dfdsdk/prime-pipeline:0.6.2
        env:
@@ -43,6 +43,7 @@ stages:
         aws configure set aws_access_key_id $(C_AWS_ACCESS_KEY_ID) --profile saml
         aws configure set aws_secret_access_key $(AWS_SECRET_ACCESS_KEY) --profile saml
         terragrunt apply-all --terragrunt-working-dir ./build --terragrunt-source-update --terragrunt-non-interactive -input=false -auto-approve
+        echo "Finished Create_ECR"
 
   - job: Build
     dependsOn: Create_ECR
@@ -55,6 +56,8 @@ stages:
         sudo pip install setuptools
         sudo pip install awscli
         chmod +x ./pipeline.sh
+        aws configure set aws_access_key_id $(C_AWS_ACCESS_KEY_ID) --profile saml
+        aws configure set aws_secret_access_key $(AWS_SECRET_ACCESS_KEY) --profile saml
         ./pipeline.sh $(Build.BuildId) $(System.DefaultWorkingDirectory)
       env:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
