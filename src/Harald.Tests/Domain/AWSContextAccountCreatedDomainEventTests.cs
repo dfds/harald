@@ -22,7 +22,6 @@ namespace Harald.Tests.Domain
             Assert.Equal(DomainEventBuilder.CapabilityName, awsContextAccountCreatedDomainEvent.Payload.CapabilityName);
             Assert.Equal(DomainEventBuilder.CapabilityId, awsContextAccountCreatedDomainEvent.Payload.CapabilityId);
             Assert.Equal(DomainEventBuilder.CapabilityRootId, awsContextAccountCreatedDomainEvent.Payload.CapabilityRootId);
-            Assert.Equal(DomainEventBuilder.RoleArn, awsContextAccountCreatedDomainEvent.Payload.RoleArn);
             Assert.Equal(DomainEventBuilder.RoleEmail, awsContextAccountCreatedDomainEvent.Payload.RoleEmail);
             Assert.Equal(DomainEventBuilder.AccountId, awsContextAccountCreatedDomainEvent.Payload.AccountId);
         }

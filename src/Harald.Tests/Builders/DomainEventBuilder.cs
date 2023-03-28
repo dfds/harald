@@ -8,7 +8,6 @@ namespace Harald.Tests.Builders
     {
         public static Guid ContextId { get; set; } = Guid.NewGuid();
         public static string AccountId { get; set; } = "1234567890";
-        public static string RoleArn { get; set; } = "arn:aws:iam::1234567890:role/pax-bookings-A43aS";
         public static string RoleEmail { get; set; } = "aws.pax-bookings-a43as@dfds.com";
 
         public static Guid CapabilityId { get; set; } = Guid.NewGuid();
@@ -28,7 +27,6 @@ namespace Harald.Tests.Builders
             data.contextId = ContextId;
             data.contextName = ContextName;
             data.accountId = AccountId;
-            data.roleArn = RoleArn;
             data.roleEmail = RoleEmail;
 
             return BuildGeneralDomainEvent("aws_context_account_created", data);
