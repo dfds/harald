@@ -17,7 +17,7 @@ namespace Harald.WebApi.Domain.Events
         }
 
         public static MemberJoinedCapabilityDomainEvent Create(
-            Guid capabilityId,
+            string capabilityId,
             string memberEmail)
         {
             var data = new MemberJoinedCapabilityData(capabilityId, memberEmail);
@@ -28,10 +28,10 @@ namespace Harald.WebApi.Domain.Events
 
     public class MemberJoinedCapabilityData
     {
-        public Guid CapabilityId { get; }
+        public string CapabilityId { get; }
         public string MemberEmail { get; }
 
-        public MemberJoinedCapabilityData(Guid capabilityId, string memberEmail)
+        public MemberJoinedCapabilityData(string capabilityId, string memberEmail)
         {
             CapabilityId = capabilityId;
             MemberEmail = memberEmail;

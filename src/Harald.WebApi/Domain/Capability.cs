@@ -11,7 +11,7 @@ namespace Harald.WebApi.Domain
         private List<CapabilityMember> _members = new List<CapabilityMember>();
 
         public IEnumerable<CapabilityMember> Members => _members.AsReadOnly();
-        public Guid Id { get; private set; }
+        public string Id { get; private set; }
         public string Name { get; private set; }
         public ChannelId SlackChannelId { get; private set; }
         public string SlackUserGroupId { get; private set; }
@@ -21,7 +21,7 @@ namespace Harald.WebApi.Domain
         {
         }
 
-        private Capability(Guid id, string name, string slackChannelId, string slackUserGroupId)
+        private Capability(string id, string name, string slackChannelId, string slackUserGroupId)
         {
             Id = id;
             Name = name;
@@ -29,7 +29,7 @@ namespace Harald.WebApi.Domain
             SlackUserGroupId = slackUserGroupId;
         }
 
-        public static Capability Create(Guid id, string name, string slackChannelId, string slackUserGroupId)
+        public static Capability Create(string id, string name, string slackChannelId, string slackUserGroupId)
         {
             var capability = new Capability(
                 id: id,

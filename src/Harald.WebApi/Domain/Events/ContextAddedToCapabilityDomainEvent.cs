@@ -18,10 +18,10 @@ namespace Harald.WebApi.Domain.Events
         }
 
         public static ContextAddedToCapabilityDomainEvent Create(
-            Guid capabilityId,
+            string capabilityId,
             string capabilityName,
             string capabilityRootId,
-            Guid contextId,
+            string contextId,
             string contextName
         )
         {
@@ -43,18 +43,18 @@ namespace Harald.WebApi.Domain.Events
 
     public class ContextAddedToCapabilityData
     {
-        public Guid CapabilityId { get; }
+        public string CapabilityId { get; }
         public string CapabilityName { get; }
         public string CapabilityRootId { get; }
-        public Guid ContextId { get; }
+        public string ContextId { get; }
         public string ContextName { get; }
 
 
         public ContextAddedToCapabilityData(
-            Guid capabilityId,
+            string capabilityId,
             string capabilityName,
             string capabilityRootId,
-            Guid contextId,
+            string contextId,
             string contextName
         )
         {
