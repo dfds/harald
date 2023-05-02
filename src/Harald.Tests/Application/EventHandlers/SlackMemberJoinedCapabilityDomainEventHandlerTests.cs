@@ -21,7 +21,7 @@ namespace Harald.Tests.Application.EventHandlers
         {
             // Arrange
             var capability = Capability.Create(
-                id: Guid.NewGuid(),
+                id: Guid.NewGuid().ToString(),
                 name: "FooCapability",
                 slackChannelId: "FooChannelId",
                 slackUserGroupId: "FooUserGroupId"

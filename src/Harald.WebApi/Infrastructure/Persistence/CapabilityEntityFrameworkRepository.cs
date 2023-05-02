@@ -17,7 +17,7 @@ namespace Harald.WebApi.Infrastructure.Persistence
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Capability>> GetById(Guid id)
+        public async Task<IEnumerable<Capability>> GetById(string id)
         {
             return await GetByFilter(o => o.Id == id);
         }

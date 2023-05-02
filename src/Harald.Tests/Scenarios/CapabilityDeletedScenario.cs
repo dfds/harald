@@ -13,7 +13,7 @@ namespace Harald.Tests.Scenarios
 {
     public class CapabilityDeletedScenario
     {
-        private Guid _capabilityId;
+        private string _capabilityId;
         private string _capabilityName;
         
         private IServiceProvider _serviceProvider;
@@ -44,7 +44,7 @@ namespace Harald.Tests.Scenarios
 
         private async Task And_a_existing_capability_slack_channel()
         {
-            _capabilityId = Guid.NewGuid();
+            _capabilityId = Guid.NewGuid().ToString();
             _capabilityName = "aFineCapability";
             var capabilityCreatedDomainEvent = CapabilityCreatedDomainEvent.Create(
                 _capabilityId,

@@ -20,7 +20,7 @@ namespace Harald.Tests.Application.EventHandlers
         {
             // Arrange
             var capability = Capability.Create(
-                Guid.NewGuid(),
+                Guid.NewGuid().ToString(),
                 "",
                 "slackChannelId",
                 ""
@@ -39,7 +39,7 @@ namespace Harald.Tests.Application.EventHandlers
                 capability.Id,
                 "",
                 "",
-                Guid.NewGuid(),
+                Guid.NewGuid().ToString(),
                 ""
             );
             

@@ -11,10 +11,10 @@ namespace Harald.Tests.Domain
         public void can_create_valid_ContextAddedToCapabilityDomainEvent_when_given_GeneralDomainEvent()
         {
             // Arrange
-            var CapabilityId = Guid.NewGuid();
+            var CapabilityId = Guid.NewGuid().ToString();
             var CapabilityName = "barbar";
             var CapabilityRootId = "barbar-Skak";
-            var ContextId = Guid.NewGuid();
+            var ContextId = Guid.NewGuid().ToString();
             var ContextName = "foo";
 
             dynamic data = new JObject();

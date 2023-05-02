@@ -4,7 +4,7 @@ namespace Harald.WebApi.Domain
 {
     public class CapabilityMember
     {
-        public Guid Id { get; private set; }
+        public string Id { get; private set; }
 
         public string Email { get; private set; }
 

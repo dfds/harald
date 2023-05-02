@@ -72,13 +72,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.Persistence
             if (query.ClientId == null || query.ClientId.IsEmpty) {return capabilities;}
 
 
-            Guid capabilityId;
-            var capabilityIdIsValid = Guid.TryParse(query.ClientId, out capabilityId);
-            if (capabilityIdIsValid == false)
-            {
-                throw new ValidationException(
-                    $"The given capability id: '{query.ClientId}' is not valid. Expected format is Guid with 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
-            }
+            string capabilityId = query.ClientId;
 
             capabilities = capabilities
                 .Where(c =>

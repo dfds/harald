@@ -124,7 +124,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
             }
 
             var userGroup = await _slackService.EnsureUserGroupExists(connection.ClientName);
-            var capability = Capability.Create(Guid.Parse(connection.ClientId), connection.ClientName,
+            var capability = Capability.Create(connection.ClientId, connection.ClientName,
                 connection.ChannelId, userGroup.Id);
 
             await _capabilityRepository.Add(capability);
@@ -186,7 +186,7 @@ namespace Harald.WebApi.Features.Connections.Infrastructure.DrivingAdapters.Api
                     await _findConnectionsByClientTypeClientIdChannelTypeChannelIdQueryHandler.HandleAsync(
                         getAllChannelConnectionsQuery);
 
-                var capability = Capability.Create(Guid.Parse(connection.ClientId), connection.ClientName,
+                var capability = Capability.Create(connection.ClientId, connection.ClientName,
                     connection.ChannelId, "");
                 await _capabilityRepository.Remove(capability);
 
