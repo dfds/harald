@@ -28,16 +28,16 @@ namespace Harald.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> DispatchMessage(DispatchMessageInput input)
         {
-            if (!input.CapabilityId.HasValue)
+            if (input.CapabilityId.Equals(""))
             {
                 return BadRequest("capabilityId is required.");
             }
 
-            var capabilities = await _capabilityRepository.GetById(input.CapabilityId.Value);
+            var capabilities = await _capabilityRepository.GetById(input.CapabilityId);
 
             if (capabilities.Any() == false)
             {
-                return UnprocessableEntity($"No channel for capability ID '{input.CapabilityId.Value}' Found");
+                return UnprocessableEntity($"No channel for capability ID '{input.CapabilityId}' Found");
             }
 
             foreach (var capability in capabilities)
@@ -67,7 +67,7 @@ namespace Harald.WebApi.Controllers
 
     public class DispatchMessageInput
     {
-        [Required] public Guid? CapabilityId { get; set; }
+        [Required] public string CapabilityId { get; set; }
 
         [Required] public string Message { get; set; }
     }

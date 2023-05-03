@@ -15,7 +15,7 @@ namespace Harald.WebApi.Domain.Events
             Payload = payload;
         }
 
-        public static CapabilityCreatedDomainEvent Create(Guid capabilityId, string capabilityName)
+        public static CapabilityCreatedDomainEvent Create(string capabilityId, string capabilityName)
         {
             var payload = new CapabilityCreatedData(capabilityId, capabilityName);
             return new CapabilityCreatedDomainEvent(payload);
@@ -26,10 +26,10 @@ namespace Harald.WebApi.Domain.Events
 
     public class CapabilityCreatedData
     {
-        public Guid CapabilityId { get; private set; }
+        public string CapabilityId { get; private set; }
         public string CapabilityName { get; private set; }
 
-        public CapabilityCreatedData(Guid capabilityId, string capabilityName)
+        public CapabilityCreatedData(string capabilityId, string capabilityName)
         {
             CapabilityId = capabilityId;
             CapabilityName = capabilityName;

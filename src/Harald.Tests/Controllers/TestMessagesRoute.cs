@@ -17,12 +17,12 @@ namespace Harald.Tests.Controllers
         public async Task Send_message_returns_expected_status_code()
         {
             var serializer = new JsonSerializer();
-            var capabilityId = Guid.NewGuid();
+            var capabilityId = Guid.NewGuid().ToString();
 
             using (var builder = new HttpClientBuilder())
             {
                 var client = builder
-                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { capabilityId }))
+                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<string> { capabilityId }))
                     .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
                     .Build();
 
@@ -42,7 +42,7 @@ namespace Harald.Tests.Controllers
             using (var builder = new HttpClientBuilder())
             {
                 var client = builder
-                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid>{}))
+                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<string>{}))
                     .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
                     .Build();
 
@@ -59,12 +59,12 @@ namespace Harald.Tests.Controllers
         public async Task Send_message_given_non_existing_capabilityId_returns_expected_status_code()
         {
             var serializer = new JsonSerializer();
-            var capabilityId = Guid.NewGuid();
+            var capabilityId = Guid.NewGuid().ToString();
 
             using (var builder = new HttpClientBuilder())
             {
                 var client = builder
-                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { capabilityId }))
+                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<string> { capabilityId }))
                     .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
                     .Build();
 
@@ -82,12 +82,12 @@ namespace Harald.Tests.Controllers
         public async Task Send_message_given_failing_slack_integration_returns_expected_status_code()
         {
             var serializer = new JsonSerializer();
-            var capabilityId = Guid.NewGuid();
+            var capabilityId = Guid.NewGuid().ToString();
 
             using (var builder = new HttpClientBuilder())
             {
                 var client = builder
-                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { capabilityId }))
+                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<string> { capabilityId }))
                     .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: true))
                     .Build();
 

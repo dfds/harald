@@ -12,7 +12,7 @@ namespace Harald.Tests.TestDoubles
     {
         private readonly List<Capability> _capabilities = new List<Capability>();
 
-        public StubCapabilityRepository(List<Guid> capabilityIds)
+        public StubCapabilityRepository(List<string> capabilityIds)
         {
             foreach (var capabilityId in capabilityIds)
             {
@@ -30,7 +30,7 @@ namespace Harald.Tests.TestDoubles
         {
         }
 
-        public Task<IEnumerable<Capability>> GetById(Guid id)
+        public Task<IEnumerable<Capability>> GetById(string id)
         {
             var capabilities = _capabilities.Where(c => c.Id == id);
 

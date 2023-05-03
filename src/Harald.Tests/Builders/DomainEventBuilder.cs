@@ -6,11 +6,11 @@ namespace Harald.Tests.Builders
 {
     public class DomainEventBuilder
     {
-        public static Guid ContextId { get; set; } = Guid.NewGuid();
+        public static string ContextId { get; set; } = Guid.NewGuid().ToString();
         public static string AccountId { get; set; } = "1234567890";
         public static string RoleEmail { get; set; } = "aws.pax-bookings-a43as@dfds.com";
 
-        public static Guid CapabilityId { get; set; } = Guid.NewGuid();
+        public static string CapabilityId { get; set; } = Guid.NewGuid().ToString();
         public static string CapabilityName { get; set; } = "pax-bookings";
         public static string CapabilityRootId { get; set; } = "paw-bookings-A43aS";
         public static string ContextName { get; set; } = "default";

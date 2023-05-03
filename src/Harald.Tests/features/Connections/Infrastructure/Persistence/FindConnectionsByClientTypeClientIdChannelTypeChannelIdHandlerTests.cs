@@ -66,19 +66,19 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
             var idOfWantedChannels = "theChannelWeWant";
             var capabilityRepository = new StubCapabilityRepository();
             await capabilityRepository.Add(Capability.Create(
-                Guid.NewGuid(),
+                Guid.NewGuid().ToString(),
                 "foo",
                 idOfWantedChannels,
                 "slackUserGroupId"
             ));
             await capabilityRepository.Add(Capability.Create(
-                Guid.NewGuid(),
+                Guid.NewGuid().ToString(),
                 "bar",
                 idOfWantedChannels,
                 "slackUserGroupId"
             ));
             await capabilityRepository.Add(Capability.Create(
-                Guid.NewGuid(),
+                Guid.NewGuid().ToString(),
                 "sheep",
                 "NotTheChannelWeWant",
                 "slackUserGroupId"
@@ -113,7 +113,7 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
         public async Task GIVEN_query_with_ClientId_set_EXPECT_only_capabilities_with_given_id()
         {
             // Arrange
-            var idOfWantedSender = Guid.NewGuid();
+            var idOfWantedSender = Guid.NewGuid().ToString();
             var capabilityRepository = new StubCapabilityRepository();
             await capabilityRepository.Add(Capability.Create(
                 idOfWantedSender,
@@ -128,7 +128,7 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
                 "slackUserGroupId"
             ));
             await capabilityRepository.Add(Capability.Create(
-                Guid.NewGuid(),
+                Guid.NewGuid().ToString(),
                 "sheep",
                 "slackChannelId",
                 "slackUserGroupId"
@@ -165,13 +165,13 @@ namespace Harald.Tests.features.Connections.Infrastructure.Persistence
             // Arrange
             var capabilityRepository = new StubCapabilityRepository();
             await capabilityRepository.Add(Capability.Create(
-                Guid.NewGuid(),
+                Guid.NewGuid().ToString(),
                 "foo",
                 "slackChannelId",
                 "slackUserGroupId"
             ));
             await capabilityRepository.Add(Capability.Create(
-                Guid.NewGuid(),
+                Guid.NewGuid().ToString(),
                 "bar",
                 "slackChannelId",
                 "slackUserGroupId"

@@ -16,7 +16,7 @@ namespace Harald.WebApi.Domain.Events
         }
 
         public static CapabilityDeletedDomainEvent Create(
-            Guid capabilityId, 
+            string capabilityId, 
             string capabilityName
         )
         {
@@ -29,10 +29,10 @@ namespace Harald.WebApi.Domain.Events
 
     public class CapabilityDeletedData
     {
-        public Guid CapabilityId { get; private set; }
+        public string CapabilityId { get; private set; }
         public string CapabilityName { get; private set; }
 
-        public CapabilityDeletedData(Guid capabilityId, string capabilityName)
+        public CapabilityDeletedData(string capabilityId, string capabilityName)
         {
             CapabilityId = capabilityId;
             CapabilityName = capabilityName;

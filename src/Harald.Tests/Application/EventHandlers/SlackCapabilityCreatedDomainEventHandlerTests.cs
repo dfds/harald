@@ -35,7 +35,7 @@ namespace Harald.Tests.Application.EventHandlers
 
             
             var capabilityCreatedDomainEvent = CapabilityCreatedDomainEvent.Create(
-                Guid.NewGuid(),
+                Guid.NewGuid().ToString(),
                 "aFineCapability"
             );
 

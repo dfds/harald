@@ -20,12 +20,12 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
         [Fact]
         public async Task delete_connection_returns_expected_status_code()
         {
-            var clientId = Guid.NewGuid();
+            var clientId = Guid.NewGuid().ToString();
 
             using (var builder = new HttpClientBuilder())
             {
                 var client = builder
-                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { clientId }))
+                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<string> { clientId }))
                     .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
                     .Build();
 
@@ -44,7 +44,7 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
             using (var builder = new HttpClientBuilder())
             {
                 var client = builder
-                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { }))
+                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<string> { }))
                     .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
                     .Build();
 
@@ -59,7 +59,7 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
         {
             var slackFacadeSpy = new SlackFacadeSpy();
             var logger = new LoggerFactory().CreateLogger<SlackService>();
-            var clientId = Guid.NewGuid();
+            var clientId = Guid.NewGuid().ToString();
             var connection = new ConnectionDto()
             {
                 ClientId = Guid.NewGuid().ToString(),
@@ -73,7 +73,7 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
             using (var builder = new HttpClientBuilder())
             {
                 var client = builder
-                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { clientId }))
+                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<string> { clientId }))
                     .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
                     .WithService<ISlackService>(new SlackService(slackFacadeSpy, logger))
                     .Build();
@@ -90,7 +90,7 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
         {
             var slackFacadeSpy = new SlackFacadeSpy();
             var logger = new LoggerFactory().CreateLogger<SlackService>();
-            var clientId = Guid.NewGuid();
+            var clientId = Guid.NewGuid().ToString();
             var connection = new ConnectionDto()
             {
                 ClientId = Guid.NewGuid().ToString(),
@@ -104,7 +104,7 @@ namespace Harald.Tests.Features.Connections.Infrastructure.DrivingAdapters.Api
             using (var builder = new HttpClientBuilder())
             {
                 var client = builder
-                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<Guid> { clientId }))
+                    .WithService<ICapabilityRepository>(new StubCapabilityRepository(new List<string> { clientId }))
                     .WithService<ISlackFacade>(new SlackFacadeStub(simulateFailOnSendMessage: false))
                     .WithService<ISlackService>(new SlackService(slackFacadeSpy, logger))
                     .Build();
