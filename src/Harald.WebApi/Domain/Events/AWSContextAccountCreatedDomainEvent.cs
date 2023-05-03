@@ -13,19 +13,17 @@ namespace Harald.WebApi.Domain.Events
         public AWSContextAccountCreatedData Payload { get; }
     }
 
-
-public class AWSContextAccountCreatedData
-{
-    public string CapabilityId { get; }
-    public string CapabilityName { get; }
-    public string CapabilityRootId { get; }
-    public string ContextId { get; }
-    public string ContextName { get; }
-    public string AccountId { get;  }
-        public string RoleArn { get; }
+    public class AWSContextAccountCreatedData
+    {
+        public string CapabilityId { get; }
+        public string CapabilityName { get; }
+        public string CapabilityRootId { get; }
+        public string ContextId { get; }
+        public string ContextName { get; }
+        public string AccountId { get;  }
         public string RoleEmail { get;  }
 
-        public AWSContextAccountCreatedData(string capabilityId, string capabilityName, string capabilityRootId, string contextId, string contextName, string accountId, string roleArn, string roleEmail)
+        public AWSContextAccountCreatedData(string capabilityId, string capabilityName, string capabilityRootId, string contextId, string contextName, string accountId, string roleEmail)
         {
             CapabilityId = capabilityId;
             CapabilityName = capabilityName;
@@ -33,7 +31,6 @@ public class AWSContextAccountCreatedData
             ContextId = contextId;
             ContextName = contextName;
             AccountId = accountId;
-            RoleArn = roleArn;
             RoleEmail = roleEmail;
 
         }
