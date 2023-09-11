@@ -1,0 +1,143 @@
+# Default values for k8s-janitor.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+managedByHelm: true
+environment: "develop"
+
+image:
+  repository: 640590921355.dkr.ecr.eu-west-1.amazonaws.com/harald/harald
+  pullPolicy: Always
+  tag: "latest"
+
+app:
+  config:
+    dbSecretRef: harald-postgres
+    kafkaSecretRef: harald-kafka
+    slackSecretRef: harald-slack
+
+  environment:
+    - name: SLACK_API_BASE_URL
+      value: "https://slack.com"
+    - name: HARALD_DATABASE_CONNECTIONSTRING
+      valueFrom:
+        secretKeyRef:
+          name: harald-postgres
+          key: PGCONNSTRING
+    - name: HARALD_KAFKA_BOOTSTRAP_SERVERS
+      valueFrom:
+        secretKeyRef:
+          name: harald-kafka
+          key: KAFKA_BOOTSTRAP_SERVERS
+    - name: HARALD_KAFKA_SASL_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: harald-kafka
+          key: KAFKA_SASL_USERNAME
+    - name: HARALD_KAFKA_SASL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: harald-kafka
+          key: KAFKA_SASL_PASSWORD
+    - name: HARALD_KAFKA_BROKER_VERSION_FALLBACK
+      value: "0.10.0.0"
+    - name: HARALD_KAFKA_API_VERSION_FALLBACK_MS
+      value: "0"
+    - name: HARALD_KAFKA_GROUP_ID
+      value: "build.selfservice.harald-consumer"
+    - name: HARALD_KAFKA_ENABLE_AUTO_COMMIT
+      value: "false"
+    - name: HARALD_KAFKA_SASL_MECHANISMS
+      value: "PLAIN"
+    - name: HARALD_KAFKA_SECURITY_PROTOCOL
+      value: "SASL_SSL"
+    - name: DD_AGENT_HOST
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+    - name: DD_TRACE_GLOBAL_TAGS
+      value: "selfservice:harald"
+    - name: DD_LOGS_INJECTION
+      value: "true"
+
+dbMigration:
+  secretRef: harald-postgres
+  image:
+    repository: 640590921355.dkr.ecr.eu-west-1.amazonaws.com/harald/dbmigrations
+    pullPolicy: Always
+    tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  awsRoleArn: ""
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 50900
+  metricsPort: 8080
+  scrapeMetrics: true
+
+ingress:
+  enabled: true
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  match: Host(`localhost`)
+  matches:
+    - name: k8s-janitor
+      match: Host(`build.dfds.cloud`) && PathPrefix(`/api`)
+      prefix: "/api"
+    - name: k8s-janitor-pub
+      match: Host(`api.hellman.oxygen.dfds.cloud`) && PathPrefix(`/ssu/api`)
+      prefix: "/ssu/api"
+  middlewares: []
+  services: []
+  routes: []
+    # - kind: Rule
+    #   match: Host(`build.dfds.cloud`)
+    #   priority: 90
+    #   middlewares: []
+    #   services:
+    #     - kind: Service
+    #       name: k8s-janitor
+    #       namespace: selfservice
+    #       port: external
+
+resources:
+  requests:
+    memory: "200Mi"
+    cpu: "100m"
+  limits:
+    memory: "400Mi"
+    cpu: "200m"
+
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
