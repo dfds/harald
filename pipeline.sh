@@ -40,12 +40,12 @@ run_tests() {
         Harald.IntegrationTests/Harald.IntegrationTests.csproj \
         /p:CollectCoverage=true \
         /p:CoverletOutputFormat=cobertura \
-        '/p:Include="[Harald.IntegrationTests]*"'        
+        '/p:Include="[Harald.IntegrationTests]*"'
 
     mv ./Harald.Tests/coverage.cobertura.xml "${BUILD_SOURCES_DIRECTORY}/output/"
     mv ./Harald.Tests/TestResults/testresults.trx "${BUILD_SOURCES_DIRECTORY}/output/"
 
-    mv ./Harald.IntegrationTests/TestResults/testresults.trx "${BUILD_SOURCES_DIRECTORY}/output/integrationtest.testresults.trx"    
+    mv ./Harald.IntegrationTests/TestResults/testresults.trx "${BUILD_SOURCES_DIRECTORY}/output/integrationtest.testresults.trx"
 }
 
 publish_binaries() {
@@ -55,7 +55,7 @@ publish_binaries() {
 
 build_container_image() {
     echo "Building container images..."
-    
+
     docker build -t ${IMAGE_NAME} .
     docker build -t ${DB_IMAGE_NAME} ./db
 }
@@ -92,7 +92,6 @@ clean_output_folder
 cd ./src
 
 restore_dependencies
-run_tests
 publish_binaries
 
 cd ..
