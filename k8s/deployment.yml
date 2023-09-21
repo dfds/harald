@@ -28,6 +28,11 @@ spec:
       initContainers:
       - name: dbmigrations
         image: 640590921355.dkr.ecr.eu-west-1.amazonaws.com/harald/dbmigrations:$(Build.BuildId)
+        securityContext:
+            runAsUser: 10001
+            runAsGroup: 3000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
         envFrom:
         - secretRef:
             name: harald-postgres
@@ -37,6 +42,11 @@ spec:
       containers:
       - name: harald
         image: 640590921355.dkr.ecr.eu-west-1.amazonaws.com/harald/harald:$(Build.BuildId)
+        securityContext:
+            runAsUser: 10001
+            runAsGroup: 3000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
         ports:
         - containerPort: 50900
           name: web
