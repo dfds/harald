@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "k8s-janitor.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "k8s-janitor.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "k8s-janitor.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "k8s-janitor.selectorLabels" . | nindent 8 }}
+    spec:
+      priorityClassName: selfservice
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "k8s-janitor.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: dbmigration
+          image: "{{ .Values.dbMigration.image.repository }}:{{ .Values.dbMigration.image.tag | default .Chart.AppVersion }}"
+          env:
+            - name: PGPORT
+              value: "1433"
+          envFrom:
+            - secretRef:
+                name: {{ .Values.dbMigration.secretRef }}
+      containers:
+        - name: app
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.app.environment }}
+          env:
+            - name: ECR_PULL_PERMISSION_AWS_ACCOUNT_ID
+              value: "{{ $.Values.app.config.ecrPullPermissionAwsAccountId }}"
+            {{- toYaml . | nindent 12}}
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.app.config.kafkaSecretRef }}
+            - secretRef:
+                name: {{ .Values.app.config.dbSecretRef }}
+            - secretRef:
+                name: {{ .Values.app.config.slackSecretRef }}
+          ports:
+            - name: web
+              protocol: TCP
+              containerPort: {{ .Values.service.port }}
+            - name: metrics
+              protocol: TCP
+              containerPort: {{ .Values.service.metricsPort }}
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 60
+            timeoutSeconds: 5
+            httpGet:
+              port: web
+              path: /healthz
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            httpGet:
+              port: web
+              path: /healthz
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
