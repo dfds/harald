@@ -78,6 +78,6 @@ jobs:
           git pull
           git config user.name "ssu-apps SA"
           git config user.email ssu-apps@dfds.cloud
-          git add selfservice-api.yaml
+          git add harald.yaml
           git commit -m "Updated selfserivce-harald image tag to develop-${{ steps.build_push_container.outputs.sha }}"
           git push
