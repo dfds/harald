@@ -34,7 +34,7 @@ spec:
           image: "{{ .Values.dbMigration.image.repository }}:{{ .Values.dbMigration.image.tag | default .Chart.AppVersion }}"
           env:
             - name: PGPORT
-              value: "1433"
+              value: "{{ .Values.dbMigration.pgport }}"
           envFrom:
             - secretRef:
                 name: {{ .Values.dbMigration.secretRef }}

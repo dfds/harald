@@ -63,6 +63,7 @@ app:
 
 dbMigration:
   secretRef: harald-postgres
+  pgport: "5432"
   image:
     repository: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/harald/dbmigrations
     pullPolicy: Always
