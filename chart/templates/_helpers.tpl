@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "k8s-janitor.name" -}}
+{{- define "harald.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "k8s-janitor.fullname" -}}
+{{- define "harald.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -23,7 +23,7 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 {{- end }}
 
-{{- define "k8s-janitor-gendis.fullname" -}}
+{{- define "harald-gendis.fullname" -}}
 {{- if .Values.gendis.fullnameOverride }}
 {{- .Values.gendis.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -39,62 +39,62 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "k8s-janitor.chart" -}}
+{{- define "harald.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "k8s-janitor.labels" -}}
-{{ include "k8s-janitor.selectorLabels" . }}
+{{- define "harald.labels" -}}
+{{ include "harald.selectorLabels" . }}
 {{- if eq .Values.managedByHelm true }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-helm.sh/chart: {{ include "k8s-janitor.chart" . }}
+helm.sh/chart: {{ include "harald.chart" . }}
 {{- end }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "k8s-janitor-gendis.labels" -}}
-{{ include "k8s-janitor-gendis.selectorLabels" . }}
+{{- define "harald-gendis.labels" -}}
+{{ include "harald-gendis.selectorLabels" . }}
 {{- if eq .Values.managedByHelm true }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-helm.sh/chart: {{ include "k8s-janitor.chart" . }}
+helm.sh/chart: {{ include "harald.chart" . }}
 {{- end }}
 {{- end }}
 
 {{/*
 Selector labels
 */}}
-{{- define "k8s-janitor.selectorLabels" -}}
-app: {{ include "k8s-janitor.fullname" . }}
-app.kubernetes.io/name: {{ include "k8s-janitor.name" . }}
+{{- define "harald.selectorLabels" -}}
+app: {{ include "harald.fullname" . }}
+app.kubernetes.io/name: {{ include "harald.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Selector labels gendis
 */}}
-{{- define "k8s-janitor-gendis.selectorLabels" -}}
-app: {{ include "k8s-janitor.fullname" . }}-gendis
-app.kubernetes.io/name: {{ include "k8s-janitor.name" . }}-gendis
+{{- define "harald-gendis.selectorLabels" -}}
+app: {{ include "harald.fullname" . }}-gendis
+app.kubernetes.io/name: {{ include "harald.name" . }}-gendis
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "k8s-janitor.serviceAccountName" -}}
+{{- define "harald.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "k8s-janitor.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "harald.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
@@ -103,9 +103,9 @@ Create the name of the service account to use
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "k8s-janitor-gendis.serviceAccountName" -}}
+{{- define "harald-gendis.serviceAccountName" -}}
 {{- if .Values.gendis.serviceAccount.create }}
-{{- default (include "k8s-janitor-gendis.fullname" .) .Values.gendis.serviceAccount.name }}
+{{- default (include "harald-gendis.fullname" .) .Values.gendis.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.gendis.serviceAccount.name }}
 {{- end }}

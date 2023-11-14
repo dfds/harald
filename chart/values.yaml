@@ -1,4 +1,4 @@
-# Default values for k8s-janitor.
+# Default values for harald.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -7,7 +7,7 @@ managedByHelm: true
 environment: "develop"
 
 image:
-  repository: 640590921355.dkr.ecr.eu-west-1.amazonaws.com/harald/harald
+  repository: 640590921355.dkr.ecr.eu-west-1.amazonaws.com/ded/harald
   pullPolicy: Always
   tag: "latest"
 
@@ -64,7 +64,7 @@ app:
 dbMigration:
   secretRef: harald-postgres
   image:
-    repository: 640590921355.dkr.ecr.eu-west-1.amazonaws.com/harald/dbmigrations
+    repository: 640590921355.dkr.ecr.eu-west-1.amazonaws.com/ded/harald/dbmigrations
     pullPolicy: Always
     tag: "latest"
 
@@ -100,32 +100,6 @@ service:
   port: 50900
   metricsPort: 8080
   scrapeMetrics: true
-
-ingress:
-  enabled: true
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  match: Host(`localhost`)
-  matches:
-    - name: k8s-janitor
-      match: Host(`build.dfds.cloud`) && PathPrefix(`/api`)
-      prefix: "/api"
-    - name: k8s-janitor-pub
-      match: Host(`api.hellman.oxygen.dfds.cloud`) && PathPrefix(`/ssu/api`)
-      prefix: "/ssu/api"
-  middlewares: []
-  services: []
-  routes: []
-    # - kind: Rule
-    #   match: Host(`build.dfds.cloud`)
-    #   priority: 90
-    #   middlewares: []
-    #   services:
-    #     - kind: Service
-    #       name: k8s-janitor
-    #       namespace: selfservice
-    #       port: external
 
 resources:
   requests:

@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "k8s-janitor.fullname" . }}
+  name: {{ include "harald.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "k8s-janitor.labels" . | nindent 4 }}
+    {{- include "harald.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "k8s-janitor.selectorLabels" . | nindent 6 }}
+      {{- include "harald.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -17,14 +17,14 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "k8s-janitor.selectorLabels" . | nindent 8 }}
+        {{- include "harald.selectorLabels" . | nindent 8 }}
     spec:
       priorityClassName: selfservice
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "k8s-janitor.serviceAccountName" . }}
+      serviceAccountName: {{ include "harald.serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
