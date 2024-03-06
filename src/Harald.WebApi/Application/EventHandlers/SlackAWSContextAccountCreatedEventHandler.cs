@@ -20,16 +20,11 @@ namespace Harald.WebApi.Application.EventHandlers
 
         public async Task HandleAsync(AWSContextAccountCreatedDomainEvent domainEvent)
         {
-            var addUserCmd =
-                $"Get-ADUser \"CN=IT BuildSource DevEx,OU=DFDS AS,OU=Mailboxes,OU=Accounts,OU=DFDS,DC=dk,DC=dfds,DC=root\" | Set-ADUser -Add @{{proxyAddresses=\"smtp:{domainEvent.Payload.RoleEmail}\"}}";
             var addDeployCredentialsBash = $"ROOT_ID={domainEvent.Payload.CapabilityRootId} ACCOUNT_ID={domainEvent.Payload.AccountId} ./kube-config-generator.sh";
 
             var sb = new StringBuilder();
 
             sb.AppendLine($"*An AWS Context account has been created for ContextId: {domainEvent.Payload.ContextId}*");
-            sb.AppendLine("\n_Add email address to shared mailbox_");
-            sb.AppendLine("Execute the following Powershell command:");
-            sb.AppendLine($"`{addUserCmd}`");
             sb.AppendLine($"\n_Generate k8s service account_");
             sb.AppendLine($"Ensure you have set the correct Kube Config for Hellman cluster: ");
             sb.AppendLine($"`export KUBECONFIG=~/.kube/hellman-saml.config`");
