@@ -3,7 +3,7 @@ name: Update Helm repo
 on:
   push:
     branches:
-      - 'main'
+      - 'master'
       - 'develop'
       - 'feat/chart'
     paths:
