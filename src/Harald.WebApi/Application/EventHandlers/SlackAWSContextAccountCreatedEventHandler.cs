@@ -28,7 +28,7 @@ namespace Harald.WebApi.Application.EventHandlers
             sb.AppendLine($"\n_Generate k8s service account_");
             sb.AppendLine($"Ensure you have set the correct Kube Config for Hellman cluster: ");
             sb.AppendLine($"`export KUBECONFIG=~/.kube/hellman-saml.config`");
-            sb.AppendLine($"Execute kube-config-generator.sh script from github.com/dfds/ce-toolbox/k8s-service-account-config-to-ssm");
+            sb.AppendLine($"Execute kube-config-generator.sh script from github.com/dfds/ce-toolbox/tree/master/k8s-service-account-config-to-ssm");
             sb.AppendLine($"`{addDeployCredentialsBash}`");
 
             await _slackFacade.SendNotificationToChannel(_slackFacade.GetDefaultNotificationChannelId(), sb.ToString());
