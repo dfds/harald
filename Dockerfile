@@ -38,5 +38,16 @@ COPY --from=build-env /build/out .
 RUN curl -sS -o /app/cert.pem https://curl.se/ca/cacert.pem
 ENV HARALD_KAFKA_SSL_CA_LOCATION=/app/cert.pem
 
+#Non-root user settings
+ARG USERNAME=harald
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME 
+
+
+USER $USERNAME
+
 #Run dotnet executable
 ENTRYPOINT ["dotnet", "Harald.WebApi.dll"]
