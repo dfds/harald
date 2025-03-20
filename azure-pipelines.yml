@@ -13,7 +13,7 @@ pr: none
 variables:
   k8s-service-connection: 'Kubernetes-Hellman-selfservice-deploy'
   KUBENAMESPACE: 'selfservice-herald-vbqkr'
-  vmImage: 'ubuntu-20.04'
+  vmImage: 'ubuntu-22.04'
 
 resources:
    containers:
